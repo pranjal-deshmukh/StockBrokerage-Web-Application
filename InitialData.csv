@@ -1,0 +1,101 @@
+Stock_Name,Company,Price ,Timestamp
+AMD,"Advanced Micro Devices, Inc.",38.56,2019-11-15 00:00:00
+ACB,Aurora Cannabis Inc.,2.73,2019-11-15 00:00:00
+AMRN,Amarin Corporation plc,24.02,2019-11-15 00:00:00
+UBER,"Uber Technologies, Inc.",26.79,2019-11-15 00:00:00
+JD,"JD.com, Inc.",33.55,2019-11-15 00:00:00
+GE,General Electric Company,11.52,2019-11-15 00:00:00
+SNAP,Snap Inc.,13.94,2019-11-15 00:00:00
+CSCO,"Cisco Systems, Inc.",45.09,2019-11-15 00:00:00
+T,AT&T Inc.,39.5,2019-11-15 00:00:00
+BAC,Bank of America Corporation,32.93,2019-11-15 00:00:00
+TEVA,Teva Pharmaceutical Industries Limited,10.2,2019-11-15 00:00:00
+PFE,Pfizer Inc.,37.28,2019-11-15 00:00:00
+NOK,Nokia Corporation,3.45,2019-11-15 00:00:00
+AMAT,"Applied Materials, Inc.",62.06,2019-11-15 00:00:00
+ROKU,"Roku, Inc.",157.3,2019-11-15 00:00:00
+F,Ford Motor Company,8.95,2019-11-15 00:00:00
+QCOM,QUALCOMM Incorporated,90.81,2019-11-15 00:00:00
+NVDA,NVIDIA Corporation,204.19,2019-11-15 00:00:00
+AAPL,Apple Inc.,265.76,2019-11-15 00:00:00
+FTCH,Farfetch Limited,9.67,2019-11-15 00:00:00
+ET,Energy Transfer LP,11.62,2019-11-15 00:00:00
+LK,Luckin Coffee Inc.,27.02,2019-11-15 00:00:00
+MSFT,Microsoft Corporation,149.97,2019-11-15 00:00:00
+CMCSA,Comcast Corporation,44.56,2019-11-15 00:00:00
+FCX,Freeport-McMoRan Inc.,11.16,2019-11-15 00:00:00
+CNP,"CenterPoint Energy, Inc.",25.48,2019-11-15 00:00:00
+S,Sprint Corporation,5.83,2019-11-15 00:00:00
+PCG,PG&E Corporation,7.42,2019-11-15 00:00:00
+MU,"Micron Technology, Inc.",47.71,2019-11-15 00:00:00
+M,"Macy's, Inc.",16.85,2019-11-15 00:00:00
+CRON,Cronos Group Inc.,6.28,2019-11-15 00:00:00
+SIRI,Sirius XM Holdings Inc.,6.92,2019-11-15 00:00:00
+ECA,Encana Corporation,4.36,2019-11-15 00:00:00
+WFC,Wells Fargo & Company,53.8,2019-11-15 00:00:00
+OXY,Occidental Petroleum Corporation,38.95,2019-11-15 00:00:00
+RIG,Transocean Ltd.,4.86,2019-11-15 00:00:00
+VIPS,Vipshop Holdings Limited,12.5,2019-11-15 00:00:00
+DHR,Danaher Corporation,142.99,2019-11-15 00:00:00
+VALE,Vale S.A.,11.46,2019-11-15 00:00:00
+DIS,The Walt Disney Company,144.67,2019-11-15 00:00:00
+INTC,Intel Corporation,57.96,2019-11-15 00:00:00
+KMI,"Kinder Morgan, Inc.",20.44,2019-11-15 00:00:00
+VZ,Verizon Communications Inc.,59.51,2019-11-15 00:00:00
+FB,"Facebook, Inc.",195.1,2019-11-15 00:00:00
+BABA,Alibaba Group Holding Limited,185.49,2019-11-15 00:00:00
+XOM,Exxon Mobil Corporation,69.19,2019-11-15 00:00:00
+GM,General Motors Company,36.89,2019-11-15 00:00:00
+WORK,"Slack Technologies, Inc.",22.86,2019-11-15 00:00:00
+NBL,"Noble Energy, Inc.",20.88,2019-11-15 00:00:00
+HPQ,HP Inc.,20.18,2019-11-15 00:00:00
+JNJ,Johnson & Johnson,134.94,2019-11-15 00:00:00
+TWTR,"Twitter, Inc.",29.25,2019-11-15 00:00:00
+C,Citigroup Inc.,74.4,2019-11-15 00:00:00
+JPM,JPMorgan Chase & Co.,129.53,2019-11-15 00:00:00
+WMT,Walmart Inc.,118.87,2019-11-15 00:00:00
+UNH,UnitedHealth Group Incorporated,269.4,2019-11-15 00:00:00
+INFY,Infosys Limited,9.86,2019-11-15 00:00:00
+HPE,Hewlett Packard Enterprise Company,17.23,2019-11-15 00:00:00
+BMY,Bristol-Myers Squibb Company,58.59,2019-11-15 00:00:00
+NLY,"Annaly Capital Management, Inc.",9.11,2019-11-15 00:00:00
+MRK,"Merck & Co., Inc.",84.9,2019-11-15 00:00:00
+MRO,Marathon Oil Corporation,12.1,2019-11-15 00:00:00
+VER,"VEREIT, Inc.",9.58,2019-11-15 00:00:00
+SLB,Schlumberger Limited,35.36,2019-11-15 00:00:00
+KO,The Coca-Cola Company,52.67,2019-11-15 00:00:00
+CVS,CVS Health Corporation,74.29,2019-11-15 00:00:00
+PINS,"Pinterest, Inc.",19.54,2019-11-15 00:00:00
+QGEN,QIAGEN N.V.,40.56,2019-11-15 00:00:00
+X,United States Steel Corporation,13.08,2019-11-15 00:00:00
+CNC,Centene Corporation,57.56,2019-11-15 00:00:00
+MPW,"Medical Properties Trust, Inc.",20.25,2019-11-15 00:00:00
+HAL,Halliburton Company,20.48,2019-11-15 00:00:00
+MO,"Altria Group, Inc.",47.97,2019-11-15 00:00:00
+CTL,"CenturyLink, Inc.",14.97,2019-11-15 00:00:00
+CGC,Canopy Growth Corporation,15.33,2019-11-15 00:00:00
+AUY,Yamana Gold Inc.,3.44,2019-11-15 00:00:00
+KGC,Kinross Gold Corporation,4.21,2019-11-15 00:00:00
+ATUS,"Altice USA, Inc.",26.88,2019-11-15 00:00:00
+ABBV,AbbVie Inc.,88.63,2019-11-15 00:00:00
+GOLD,Barrick Gold Corporation,16.57,2019-11-15 00:00:00
+COG,Cabot Oil & Gas Corporation,18.17,2019-11-15 00:00:00
+V,Visa Inc.,179.77,2019-11-15 00:00:00
+SQ,"Square, Inc.",64.7,2019-11-15 00:00:00
+CBS,CBS Corporation,38.57,2019-11-15 00:00:00
+GRUB,Grubhub Inc.,39.79,2019-11-15 00:00:00
+ZNGA,Zynga Inc.,6.28,2019-11-15 00:00:00
+SBUX,Starbucks Corporation,84.21,2019-11-15 00:00:00
+MRVL,Marvell Technology Group Ltd.,26.86,2019-11-15 00:00:00
+RF,Regions Financial Corporation,16.52,2019-11-15 00:00:00
+HBI,Hanesbrands Inc.,15.57,2019-11-15 00:00:00
+ITUB,Itau Unibanco Holding S.A.,8.56,2019-11-15 00:00:00
+PTON,"Peloton Interactive, Inc.",27.23,2019-11-15 00:00:00
+SDC,"SmileDirectClub, Inc.",8.6,2019-11-15 00:00:00
+CZR,Caesars Entertainment Corporation,12.96,2019-11-15 00:00:00
+LYFT,"Lyft, Inc.",43.04,2019-11-15 00:00:00
+PG,The Procter & Gamble Company,120.54,2019-11-15 00:00:00
+SCHW,The Charles Schwab Corporation,44.35,2019-11-15 00:00:00
+VIAB,Viacom Inc.,23.06,2019-11-15 00:00:00
+KHC,The Kraft Heinz Company,31.3,2019-11-15 00:00:00
+GILD,"Gilead Sciences, Inc.",65.07,2019-11-15 00:00:00
