@@ -1,0 +1,20 @@
+{
+  "name": "stockexchange",
+  "version": "1.0.0",
+  "description": "Stock exchange web app and api layer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "mysql": "^2.17.1",
+    "path": "0.12.7",
+    "util": "0.12.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
