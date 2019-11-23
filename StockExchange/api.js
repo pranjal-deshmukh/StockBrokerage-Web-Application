@@ -56,7 +56,7 @@ function updatePrices() {
             return results;
     });
 }
-setInterval(updatePrices, 120000);
+setInterval(updatePrices, 120000); //update every 2 minutes
 
 router.get('/getLatestStockPrice', (req,res) => {
     connection.query(`SELECT Price As price, Timestamp as timestamp FROM stocks WHERE Stock_Name = '${req.body.symbol}' ORDER BY Timestamp DESC Limit 1`,
@@ -71,7 +71,7 @@ router.get('/getLatestStockPrice', (req,res) => {
 });
 
 router.get('/getStockHistory', (req, res) => {
-    connection.query(`SELECT Price As price, Timestamp as timestamp FROM stocks WHERE Stock_Name = '${req.body.symbol}' ORDER BY Timestamp DESC`,
+    connection.query(`SELECT Price As price, Timestamp as timestamp FROM stocks WHERE Stock_Name = '${req.body.symbol}' and Timestamp >= '${req.body.timestamp}' ORDER BY Timestamp DESC`,
         function (error, results, fields) {
             if (error) throw error;
 
