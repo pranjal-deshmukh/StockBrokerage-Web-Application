@@ -1,7 +1,6 @@
 // load all the things we need
 var LocalStrategy    = require('passport-local').Strategy;
 
-
 // load up the user model
 var mysql = require('mysql');
 var bcrypt = require('bcrypt-nodejs');
@@ -9,7 +8,6 @@ var dbconfig = require('./database');
 var connection = mysql.createConnection(dbconfig.connection);
 
 connection.query('USE ' + dbconfig.database);
-
 
 module.exports = function(passport) {
 
@@ -21,24 +19,24 @@ module.exports = function(passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function(user, done) {
-        done(null, user.id);
+        done(null, user.idUser);
     });
 
     // used to deserialize the user
-    passport.deserializeUser(function(id, done) {
-        connection.query("SELECT * FROM " + dbconfig.users_table + " WHERE `idUser` = "+ id, function(err, rows){
+    passport.deserializeUser(function(idUser, done) {
+        connection.query("SELECT * FROM " + dbconfig.users_table + " WHERE `idUser` = "+ idUser, function(err, rows){
             done(err, rows[0]);
         });
     });
 
     // =========================================================================
-    // LOCAL LOGIN =============================================================
+    // LOCAL SIGNUP =============================================================
     // =========================================================================
     passport.use(
         'local-signup',
         new LocalStrategy(
             {
-                // by default, local strategy uses username and password, we will override with emailemail
+                // by default, local strategy uses username and password, we will overridUsere with email
                 usernameField : 'username', // can be an email if you want
                 passwordField : 'password',
                 passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
@@ -64,8 +62,8 @@ module.exports = function(passport) {
                             "values ('" + newUser.username + "','" + newUser.password + "')";
 
                         connection.query(insertQuery, function(err, rows) {
-                            newUser.id = rows.insertId;
-							console.log(newUser);
+                            newUser.idUser = rows.insertId;
+
                             return done(null, newUser);
                         });
                     }
@@ -76,7 +74,7 @@ module.exports = function(passport) {
 
 
     // =========================================================================
-    // LOCAL SIGNUP ============================================================
+    // LOCAL LOGIN ============================================================
     // =========================================================================
     passport.use(
         'local-login',
@@ -88,9 +86,7 @@ module.exports = function(passport) {
                 passReqToCallback : true // allows us to pass back the entire request to the callback
             },
             function(req, username, password, done) { // callback with email and password from our form
-				 if (err) throw err;
                 connection.query("SELECT * FROM " + dbconfig.users_table + " WHERE `username` = '" + username + "'", function(err, rows){
-					console.log("reg");
                     if (err)
                         return done(err);
                     if (!rows.length) {
@@ -102,12 +98,10 @@ module.exports = function(passport) {
                         return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
 
                     // all is well, return successful user
-					console.log(rows);
                     return done(null, rows[0]);
                 });
             }
         )
     );
-
-
-};
+	
+}
