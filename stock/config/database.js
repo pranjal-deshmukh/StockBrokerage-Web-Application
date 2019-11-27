@@ -1,9 +1,10 @@
-
-
+// config/database.js
 module.exports = {
-  'url':{
-  'host': "localhost",
-  'user': "root",
-  'password': "sk99"
-  }
-}
+    'connection': {
+        'host': 'localhost',
+        'user': 'root',
+        'password': 'sk99'
+    },
+    'database': 'brokerage',
+    'users_table': 'users'
+};
