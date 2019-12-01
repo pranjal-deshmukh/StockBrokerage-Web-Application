@@ -8,17 +8,16 @@ CREATE TABLE `brokerage`.`stocks` (
   `Timestamp` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `Company` VARCHAR(100) NULL,
   PRIMARY KEY (`idStocks`));
-
-
-
-CREATE TABLE `brokerage`.`user` (
-  `idUser` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NULL,
-  `address` VARCHAR(45) NULL,
-  `email_id` VARCHAR(20) NOT NULL,
-  `balance` DOUBLE NULL DEFAULT 0,
-  PRIMARY KEY (`idUser`));
+              
+  CREATE TABLE `brokerage`.`users` (
+   `idUser` NOT NULL AUTO_INCREMENT,
+   `username` varchar(45) NOT NULL,
+   `password` varchar(255) DEFAULT NULL,
+   `address` varchar(100) DEFAULT NULL,
+   `email` varchar(40) DEFAULT NULL,
+   `balance` double DEFAULT '0',
+   PRIMARY KEY (`idUser`)
+ );
 
 CREATE TABLE `brokerage`.`transaction` (
   `idtransaction` INT NOT NULL AUTO_INCREMENT,
