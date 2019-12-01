@@ -6,7 +6,7 @@ const routes = require('./api');
 
 const app = express();
 
-const port = 8080;
+const port = 8081;
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
