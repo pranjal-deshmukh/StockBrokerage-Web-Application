@@ -10,7 +10,7 @@ CREATE TABLE `brokerage`.`stocks` (
   PRIMARY KEY (`idStocks`));
               
   CREATE TABLE `brokerage`.`users` (
-   `idUser` NOT NULL AUTO_INCREMENT,
+   `idUser` INT NOT NULL AUTO_INCREMENT,
    `username` varchar(45) NOT NULL,
    `password` varchar(255) DEFAULT NULL,
    `address` varchar(100) DEFAULT NULL,
