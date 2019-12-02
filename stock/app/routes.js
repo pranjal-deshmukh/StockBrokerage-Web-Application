@@ -1,5 +1,4 @@
 module.exports = function(app, passport) {
-
 // normal routes ===============================================================
 
 	// show the home page (will also have our login links)
@@ -11,6 +10,14 @@ module.exports = function(app, passport) {
 	app.get('/profile', isLoggedIn, function(req, res) {
 		res.render('profile.ejs', {
 			user : req.user
+		});
+	});
+
+	// STOCK SEARCH =========================
+	app.get('/search', isLoggedIn, function(req, res) {
+		var searchStock = require('./searchstock');
+		res.render('search.ejs', {
+			utils: searchStock
 		});
 	});
 

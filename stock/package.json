@@ -3,16 +3,18 @@
   "main": "server.js",
   "dependencies": {
     "bcrypt-nodejs": "latest",
-    "body-parser": "~1.0.0",
+    "body-parser": "^1.19.0",
     "connect-flash": "~0.1.1",
-    "cookie-parser": "~1.0.0",
+    "cookie-parser": "^1.4.4",
     "ejs": "~0.8.5",
-    "express": "~4.0.0",
-    "express-session": "~1.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
     "method-override": "~1.0.0",
-    "morgan": "~1.0.0",
+    "morgan": "^1.9.1",
     "mysql": "^2.4.3",
     "passport": "~0.1.17",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "request": "^2.88.0",
+    "xmlhttprequest": "^1.8.0"
   }
 }
