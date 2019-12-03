@@ -82,4 +82,16 @@ router.post('/getStockHistory', (req, res) => {
     });
 });
 
+router.get('/getStockList', (req, res) => {
+    connection.query('SELECT distinct Stock_Name FROM stocks order by Stock_Name ASC',
+    function (error, results, fields) {
+        if (error) throw error;
+
+        console.log('getStockList result: ', results);
+
+        res.send({list: results});
+        return results;
+    });
+});
+
 module.exports = router;
