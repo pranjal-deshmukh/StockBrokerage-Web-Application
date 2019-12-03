@@ -7,8 +7,8 @@ const mysql = require('mysql');
 
 const connection = mysql.createConnection({
     host     : 'localhost',
-    user     : 'stocks',
-    password : 'WPL6314',
+    user     : 'root',
+    password : 'sk99',
     database : 'brokerage',
     multipleStatements : true
 });
@@ -32,7 +32,7 @@ function updatePrices() {
                 'Join (Select st.Stock_Name, max(st.`Timestamp`) as `timestamp` '+
                 'From stocks st '+
                 'group by Stock_Name) tb on s.Stock_Name = tb.Stock_Name and s.`Timestamp` = tb.`timestamp` '+
-                'group by Stock_Name';
+                'group by Stock_Name, s.Price, s.`Timestamp`, s.Company';
     connection.query(sql,
         function (error, results, fields) {
             if (error) throw error;
