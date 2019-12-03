@@ -1,21 +1,22 @@
-module.exports = function(app, passport) {
+module.exports = function (app, passport) {
 	var axios = require('axios');
-// normal routes ===============================================================
+	var moment = require('moment');
+	// normal routes ===============================================================
 
 	// show the home page (will also have our login links)
-	app.get('/', function(req, res) {
+	app.get('/', function (req, res) {
 		res.render('index.ejs');
 	});
 
 	// PROFILE SECTION =========================
-	app.get('/profile', isLoggedIn, function(req, res) {
+	app.get('/profile', isLoggedIn, function (req, res) {
 		res.render('profile.ejs', {
-			user : req.user
+			user: req.user
 		});
 	});
 
 	// STOCK SEARCH =========================
-	app.get('/search', isLoggedIn, function(req, res) {
+	app.get('/search', isLoggedIn, function (req, res) {
 		// var searchStock = require('./searchstock');
 		res.render('search.ejs', {
 			utils: 'hi'//searchStock
@@ -23,31 +24,29 @@ module.exports = function(app, passport) {
 	});
 
 	// SHOW STOCK PRICES
-	app.get('/show/:stock/:time', isLoggedIn, function(req, res) {
+	app.get('/show/:stock/:time', isLoggedIn, function (req, res) {
 		var stock = req.params.stock;
 		var time = req.params.time;
 
-		var date = new Date();
-		// console.log('date ISO: ' + date.toISOString);
+		var date = moment();
 
 		if (time === 'wk') {
 			time = 'This Week';
-			let day = date.getDay();
-			//TODO: logic to set date for current week
+			date = date.startOf('week');
 		} else if (time === '1wk') {
-			time = 'Last Week';
-			//TODO: logic to set date for past week
+			time = 'Past Week';
+			date = date.subtract(7, 'days');
 		} else if (time === 'mo') {
 			time = 'This Month';
-			date.setFullYear(date.getFullYear(), date.getMonth(), 1);
+			date = date.startOf('month');
 		} else if (time === 'yr') {
 			time = 'This Year';
-			date.setFullYear(date.getFullYear(), 0, 1);
+			date = date.startOf('year');
 		} else {
 			time = 'Past 5 Years';
-			date.setFullYear(date.getFullYear() - 5, date.getMonth(), date.getDate());
+			date = date.subtract(5, 'years');
 		}
-
+		console.log(`${time} ISO: ` + date.toISOString);
 		//get price info from exchange app.
 		function getCurrentPrice() {
 			const url = 'http://localhost:8081/api/getLatestStockPrice';
@@ -79,86 +78,93 @@ module.exports = function(app, passport) {
 			console.log('history: ', result[1].data);
 
 			res.render('showstock.ejs', {
-				utils: {stock, time, curr: result[0].data.price, history: result[1].data.history}
+				utils: { stock, time, curr: result[0].data.price, history: result[1].data.history }
 			});
 		}).catch(err => console.log(err));
 
-		
+
 	});
 
 	// LOGOUT ==============================
-	app.get('/logout', function(req, res) {
+	app.get('/logout', function (req, res) {
 		req.logout();
 		res.redirect('/');
 	});
 
-// =============================================================================
-// AUTHENTICATE (FIRST LOGIN) ==================================================
-// =============================================================================
+	// =============================================================================
+	// AUTHENTICATE (FIRST LOGIN) ==================================================
+	// =============================================================================
 
 	// locally --------------------------------
-		// LOGIN ===============================
-		// show the login form
-		app.get('/login', function(req, res) {
-			res.render('login.ejs', { message: req.flash('loginMessage') });
-		});
+	// LOGIN ===============================
+	// show the login form
+	app.get('/login', function (req, res) {
+		res.render('login.ejs', { message: req.flash('loginMessage') });
+	});
 
-		// process the login form
-		app.post('/login', passport.authenticate('local-login', {
-			successRedirect : '/profile', // redirect to the secure profile section
-			failureRedirect : '/login', // redirect back to the signup page if there is an error
-			failureFlash : true // allow flash messages
-		}));
+	// process the login form
+	app.post('/login', passport.authenticate('local-login', {
+		successRedirect: '/profile', // redirect to the secure profile section
+		failureRedirect: '/login', // redirect back to the signup page if there is an error
+		failureFlash: true // allow flash messages
+	}));
 
-		// SIGNUP =================================
-		// show the signup form
-		app.get('/signup', function(req, res) {
-			res.render('signup.ejs', { message: req.flash('signupMessage') });
-		});
+	// SIGNUP =================================
+	// show the signup form
+	app.get('/signup', function (req, res) {
+		res.render('signup.ejs', { message: req.flash('signupMessage') });
+	});
 
-		// process the signup form
-		app.post('/signup', passport.authenticate('local-signup', {
-			successRedirect : '/profile', // redirect to the secure profile section
-			failureRedirect : '/signup', // redirect back to the signup page if there is an error
-			
-			failureFlash : true // allow flash messages
-		}));
+	// process the signup form
+	app.post('/signup', passport.authenticate('local-signup', {
+		successRedirect: '/profile', // redirect to the secure profile section
+		failureRedirect: '/signup', // redirect back to the signup page if there is an error
+
+		failureFlash: true // allow flash messages
+	}));
 
 
 
-// =============================================================================
-// AUTHORIZE (ALREADY LOGGED IN /  =============
-// =============================================================================
+	// =============================================================================
+	// AUTHORIZE (ALREADY LOGGED IN /  =============
+	// =============================================================================
 
 	// locally --------------------------------
-		app.get('/connect/local', function(req, res) {
-			res.render('connect-local.ejs', { message: req.flash('loginMessage') });
-		});
-		app.post('/connect/local', passport.authenticate('local-signup', {
-			successRedirect : '/profile', // redirect to the secure profile section
-			failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
-			failureFlash : true // allow flash messages
-		}));
+	app.get('/connect/local', function (req, res) {
+		res.render('connect-local.ejs', { message: req.flash('loginMessage') });
+	});
+	app.post('/connect/local', passport.authenticate('local-signup', {
+		successRedirect: '/profile', // redirect to the secure profile section
+		failureRedirect: '/connect/local', // redirect back to the signup page if there is an error
+		failureFlash: true // allow flash messages
+	}));
 
 
 
-// =============================================================================
-// UNLINK ACCOUNTS =============================================================
-// =============================================================================
-// used to unlink accounts. for social accounts, just remove the token
-// for local account, remove email and password
-// user account will stay active in case they want to reconnect in the future
+	// =============================================================================
+	// UNLINK ACCOUNTS =============================================================
+	// =============================================================================
+	// used to unlink accounts. for social accounts, just remove the token
+	// for local account, remove email and password
+	// user account will stay active in case they want to reconnect in the future
 
 	// local -----------------------------------
-	app.get('/unlink/local', isLoggedIn, function(req, res) {
-		var user            = req.user;
-		user.local.email    = undefined;
+	app.get('/unlink/local', isLoggedIn, function (req, res) {
+		var user = req.user;
+		user.local.email = undefined;
 		user.local.password = undefined;
-		user.save(function(err) {
+		user.save(function (err) {
 			res.redirect('/profile');
 		});
 	});
 
+	app.get('/invalid', function (req, res) {
+		res.render('invalid.ejs');
+	});
+
+	app.use(function(req, res) {
+		res.redirect('/invalid')
+	});
 
 
 };
