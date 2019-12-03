@@ -14,6 +14,15 @@
 </head>
 
 <body>
+	<script>
+		function viewStock() {
+			var e = document.getElementById('select_stock');
+			var n = document.getElementById('select_time');
+			var stock = e.options[e.selectedIndex].value;
+			var time = n.options[n.selectedIndex].value;
+			window.location.href = `/show/${stock}/${time}`;
+		}
+	</script>
 	<div class="container">
 
 		<div class="page-header text-center">
@@ -136,12 +145,22 @@
 					</select>
 				</span>
 			</div>
-
+			<span>
+				<strong>Select the Time Period: </strong>
+				<select id="select_time" name="time">
+					<option value="wk">This Week</option>
+					<option value="1wk">Last Week</option>
+					<option value="mo">This Month</option>
+					<option value="yr">This Year</option>
+					<option value="5yr">Past 5 Years</option>
+				</select>
+			</span>
 		</div>
-
-	<%
-		console.log('output: ', utils.getList());
-	%>
+	<a id="aLink" class="btn btn-default btm-sm">Submit</a>
+	<script>
+		var sub = document.getElementById('aLink');
+		sub.onclick = viewStock;
+	</script>
 	</div>
 </body>
 

@@ -21,6 +21,16 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	// SHOW STOCK PRICES
+	app.get('/show/:stock/:time', isLoggedIn, function(req, res) {
+		var stock = req.params.stock;
+		var time = req.params.time;
+		//get price info from exchange app.
+		res.render('showstock.ejs', {
+			utils: {stock, time}
+		});
+	});
+
 	// LOGOUT ==============================
 	app.get('/logout', function(req, res) {
 		req.logout();

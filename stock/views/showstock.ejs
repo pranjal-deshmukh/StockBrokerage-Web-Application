@@ -12,7 +12,7 @@
 <div class="container">
 
 	<div class="page-header text-center">
-		<h1> Profile Page</h1>
+		<h1>Search Stocks</h1>
 		<a href="/logout" class="btn btn-default btn-sm">Logout</a>
 	</div>
 
@@ -21,21 +21,18 @@
 		<!-- LOCAL INFORMATION -->
 		<div class="col-sm-6">
 			<div class="well">
-				<h3><span class="fa fa-user"></span>Personal Information</h3>
+				<h3><span class="fa fa-user"></span>Stock</h3>
 
-				<% if (user.username) { %>
+				<% if (utils.stock) { %>
 					<p>
-						<strong>Username</strong>: <%= user.username %><br>
-						<strong>Password</strong>: ***********<br>
-						<strong>Email</strong>: <%= user.email %><br>
-						<strong>Address</strong>: <%= user.address %>
+                        <strong>Stock</strong>: <%= utils.stock %><br>
+                        <strong>Time</strong>: <%= utils.time %>
 					</p>
 					
 					
 				<% } %>
 					
 			</div>
-			<a href="/edit_profile" class="btn btn-default btm-sm">Edit Info</a>
 		</div>
 		<a href="/search" class="btn btn-default btm-sm">Search Stocks</a>
 
