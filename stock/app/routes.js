@@ -1,4 +1,5 @@
 module.exports = function(app, passport) {
+	var axios = require('axios');
 // normal routes ===============================================================
 
 	// show the home page (will also have our login links)
@@ -15,9 +16,9 @@ module.exports = function(app, passport) {
 
 	// STOCK SEARCH =========================
 	app.get('/search', isLoggedIn, function(req, res) {
-		var searchStock = require('./searchstock');
+		// var searchStock = require('./searchstock');
 		res.render('search.ejs', {
-			utils: searchStock
+			utils: 'hi'//searchStock
 		});
 	});
 
@@ -25,10 +26,64 @@ module.exports = function(app, passport) {
 	app.get('/show/:stock/:time', isLoggedIn, function(req, res) {
 		var stock = req.params.stock;
 		var time = req.params.time;
+
+		var date = new Date();
+		// console.log('date ISO: ' + date.toISOString);
+
+		if (time === 'wk') {
+			time = 'This Week';
+			let day = date.getDay();
+			//TODO: logic to set date for current week
+		} else if (time === '1wk') {
+			time = 'Last Week';
+			//TODO: logic to set date for past week
+		} else if (time === 'mo') {
+			time = 'This Month';
+			date.setFullYear(date.getFullYear(), date.getMonth(), 1);
+		} else if (time === 'yr') {
+			time = 'This Year';
+			date.setFullYear(date.getFullYear(), 0, 1);
+		} else {
+			time = 'Past 5 Years';
+			date.setFullYear(date.getFullYear() - 5, date.getMonth(), date.getDate());
+		}
+
 		//get price info from exchange app.
-		res.render('showstock.ejs', {
-			utils: {stock, time}
-		});
+		function getCurrentPrice() {
+			const url = 'http://localhost:8081/api/getLatestStockPrice';
+			const data = {
+				symbol: stock
+			};
+
+			return axios({
+				method: 'post',
+				url: url,
+				data: data
+			});
+		}
+		function getPriceHistory() {
+			const url = 'http://localhost:8081/api/getStockHistory';
+			const data = {
+				symbol: stock,
+				timestamp: date.toISOString()
+			};
+
+			return axios({
+				method: 'post',
+				url: url,
+				data: data
+			});
+		}
+		axios.all([getCurrentPrice(), getPriceHistory()]).then((result) => {
+			console.log('curr: ', result[0].data);
+			console.log('history: ', result[1].data);
+
+			res.render('showstock.ejs', {
+				utils: {stock, time, curr: result[0].data.price, history: result[1].data.history}
+			});
+		}).catch(err => console.log(err));
+
+		
 	});
 
 	// LOGOUT ==============================
