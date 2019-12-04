@@ -59,7 +59,7 @@ function updatePrices() {
 setInterval(updatePrices, 120000); //update every 2 minutes
 
 router.post('/getLatestStockPrice', (req,res) => {
-    connection.query(`SELECT Price As price, Timestamp as timestamp FROM stocks WHERE Stock_Name = '${req.body.symbol}' ORDER BY Timestamp DESC Limit 1`,
+    connection.query(`SELECT Price As price, Timestamp as timestamp, Company as company FROM stocks WHERE Stock_Name = '${req.body.symbol}' ORDER BY Timestamp DESC Limit 1`,
         function (error, results, fields) {
             if (error) throw error;
 
