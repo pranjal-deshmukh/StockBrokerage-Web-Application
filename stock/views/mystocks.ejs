@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Node Authentication</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<script>
+	function showDiv() {
+   document.getElementById('update_profile_div').style.display = "block";
+	}
+
+	function show_accounts(event)
+	{
+    var a = event.target;
+	}
+	</script>
+	<style>
+		body {
+			padding-top: 30px;
+			word-wrap: break-word;
+		}
+
+		.nav-scroller {
+			position: relative;
+			z-index: 2;
+			height: 2.75rem;
+			overflow-y: hidden;
+		}
+
+		.nav-scroller .nav {
+			display: -ms-flexbox;
+			display: flex;
+			-ms-flex-wrap: nowrap;
+			flex-wrap: nowrap;
+			padding-bottom: 1rem;
+			margin-top: -1px;
+			overflow-x: auto;
+			text-align: center;
+			white-space: nowrap;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.nav-scroller .nav-link {
+			padding-top: .75rem;
+			padding-bottom: .75rem;
+			font-size: .875rem;
+		}
+
+		.d-flex {
+			display: -ms-flexbox !important;
+			display: flex !important
+		}
+
+		.justify-content-between {
+			-ms-flex-pack: justify !important;
+			justify-content: space-between !important
+		}
+
+		.py-1 {
+			padding-top: .25rem !important
+		}
+
+		.p-2 {
+			padding: .5rem !important
+		}
+
+		.text-muted {
+			color: #6c757d !important;
+			font-size: medium;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+			<div class="page-header text-center">
+					<h1> Profile Page</h1>
+					<a style="float: right; margin-top: 30px;" href="/logout" class="btn btn-default btn-sm">Logout</a>
+				</div>
+				
+				<div class="nav-scroller py-1">
+					<nav class="nav d-flex justify-content-between">
+						<a class="p-2 text-muted" href="/profile">My Profile</a>
+						<a class="p-2 text-muted" href="">My Stocks</a>
+						<a class="p-2 text-muted" href="/search">Search Stocks</a>
+						<a class="p-2 text-muted" href="">Buy Stocks</a>
+						<a class="p-2 text-muted" href="">Sell Stocks</a>
+						<a class="p-2 text-muted" href="">Transfer Funds</a>
+					</nav>
+				</div>
+				<br>
+	
+    
+        <table class="table table-inverse">
+        <thead>
+        <tr>
+          <th>Stock</th>
+          <th>Company</th>
+          <th>Price</th>
+          <th>Number_Stocks</th>
+          <th>Recurring_buy</th>
+          <th>Recurring_sell</th>
+          <th>No_stocks_sell</th>
+          <th>No_stocks_buy</th>
+
+        </tr>
+        </thead>
+      <tbody>
+        <% for(var i=0; i < stocklist.Stock.length; i++) { %>
+       <tr>
+         
+         <td><%= stocklist.Stock[i] %></t   d>
+         <td><%= stocklist.Company[i] %></td>
+         <td><%= stocklist.Price[i] %></td>
+         <td><%= stocklist.Number_Stocks[i] %></td>
+         <td><%= stocklist.Recurring_buy[i] %></td>
+         <td><%= stocklist.Recurring_sell[i] %></td>
+         <td><%= stocklist.No_stocks_buy[i] %></td>
+         <td><%= stocklist.No_stocks_sell[i] %></td>
+
+
+
+       </tr>
+    <% } %>
+      </tbody>
+
+    </table>
+
+    </div>
+    
+
+
+</body>
+
+</html>
