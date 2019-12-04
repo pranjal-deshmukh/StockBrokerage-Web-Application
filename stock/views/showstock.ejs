@@ -1,45 +1,103 @@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 <!doctype html>
 <html>
+
 <head>
-	<title>Node Authentication</title>
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-	<style>
-		body 		{ padding-top:80px; word-wrap:break-word; }
-	</style>
+    <title>Node Authentication</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body {
+            padding-top: 80px;
+            word-wrap: break-word;
+        }
+    </style>
 </head>
+
 <body>
-<div class="container">
+    <div class="container">
 
-	<div class="page-header text-center">
-		<h1>Search Stocks</h1>
-		<a href="/logout" class="btn btn-default btn-sm">Logout</a>
-	</div>
+        <div class="page-header text-center">
+            <h1>Search Stocks</h1>
+            <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        </div>
 
-	<div class="row">
+        <div class="row" style="margin: auto; text-align: center;">
 
-		<!-- LOCAL INFORMATION -->
-		<div class="col-sm-6">
-			<div class="well">
-				<h3><span class="fa fa-user"></span>Stock</h3>
+            <div style="margin-left: auto; margin-right: auto; width: 50%;">
+                <div class="well">
+                    <h3><span class="fa fa-user"></span><%= utils.stock %></h3>
 
-				<% if (utils.stock) { %>
-					<p>
-                        <strong>Stock</strong>: <%= utils.stock %><br>
+                    <% if (utils.stock) { %>
+                    <p>
+                        <strong>Company</strong>: <%= utils.company %><br>
                         <strong>Time Period</strong>: <%= utils.time %><br>
-                        <strong>Current Price</strong>: $<%= utils.curr %>
-					</p>
-					
-					
-				<% } %>
-					
-			</div>
-		</div>
-		<a href="/search" class="btn btn-default btm-sm">Search Stocks</a>
-
-	</div>
+                    </p>
 
 
-</div>
+                    <% } %>
+                    <a href="/search" class="btn btn-default btm-sm">Search Stocks</a>
+                </div>
+            </div>
+            <h2>Current Price: $<%= utils.curr %></h2>
+            <!-- TODO: graph of stock prices (array in utils.history) -->
+            <canvas id="stockChart" width="400" height="200"></canvas>
+
+            <span id='dates' hidden>
+                <%= JSON.stringify(utils.dates) %>
+            </span>
+            <span id='prices' hidden>
+                <%= JSON.stringify(utils.prices) %>
+            </span>
+
+            <script>
+                var dates = JSON.parse(document.getElementById('dates').textContent);
+                var prices = JSON.parse(document.getElementById('prices').textContent);
+                document.getElementById('dates').remove();
+                document.getElementById('prices').remove();
+
+                var ctx = document.getElementById('stockChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Prices',
+                            data: prices,
+                            backgroundColor: [
+                                'rgba(0, 0, 0, 0)',
+                                'rgba(54, 162, 235, 0)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            </script>
+        </div>
+
+
+    </div>
 </body>
+
 </html>

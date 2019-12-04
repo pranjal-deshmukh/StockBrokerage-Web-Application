@@ -21,14 +21,12 @@
 		<!-- LOCAL INFORMATION -->
 		<div class="col-sm-6">
 			<div class="well">
-				<h3><span class="fa fa-user"></span>Personal Information</h3>
+				<h3><span class="fa fa-user"></span>Profile Information</h3>
 
 				<% if (user.username) { %>
 					<p>
 						<strong>Username</strong>: <%= user.username %><br>
 						<strong>Password</strong>: ***********<br>
-						<strong>Email</strong>: <%= user.email %><br>
-						<strong>Address</strong>: <%= user.address %>
 					</p>
 					
 					
@@ -36,6 +34,15 @@
 					
 			</div>
 			<a href="/edit_profile" class="btn btn-default btm-sm">Edit Info</a>
+		</div>
+		<div class="col-sm-6">
+			<div class="well">
+				<h3><span class="fa fa-user"></span>Personal Information</h3>
+					<p>
+						<strong>Email</strong>: <%= user.email %><br>
+						<strong>Address</strong>: <%= user.address %>
+					</p>
+			</div>
 		</div>
 		<a href="/search" class="btn btn-default btm-sm">Search Stocks</a>
 
