@@ -1,13 +1,19 @@
 // load up the user model
 var mysql = require('mysql');
+
+var User = require('./models/user');
 var bcrypt = require('bcrypt-nodejs');
+
 var dbconfig = require('../config/database');
+var nodemailer = require('nodemailer');
 var connection = mysql.createConnection(dbconfig.connection);
 
 connection.query('USE ' + dbconfig.database);
 module.exports = function (app, passport) {
+	var async = require('async');
 	var axios = require('axios');
 	var moment = require('moment');
+	var crypto = require('crypto');
 	//var queries = require('./queries');
 
 	// normal routes ===============================================================
@@ -39,10 +45,16 @@ module.exports = function (app, passport) {
 	});
 
 	app.post('/add_money', isLoggedIn, (req, res) => {
+		var x="op";
+		x=req.body.transfer;
+		if(x=="To"){
+			req.body.balance=-1*req.body.balance;
+		}
+		
 		connection.query("update users set `balance`=`balance`+'" +req.body.balance+ "' where `idUser`='" +req.user.idUser+"'",
 		function (error, results, fields) {
 			if (error) throw error;
-	
+			
 			console.log('Updating balance');
 	
 			res.redirect('/profile');
@@ -67,6 +79,70 @@ module.exports = function (app, passport) {
 		res.render('index.ejs');
 	});
 
+
+	app.get('/forgot', function(req, res) {
+		res.render('forgot', {
+		  user: req.user
+		});
+	  });
+
+	  app.post('/forgot', function(req, res, next) {
+		async.waterfall([
+		  function(done) {
+			crypto.randomBytes(20, function(err, buf) {
+			  var token = buf.toString('hex');
+			  done(err, token);
+			});
+		  },
+		  function(token, done) {
+
+			connection.query("SELECT * FROM " + dbconfig.users_table + " WHERE `email` = '" + req.body.email + "'", function(err, rows){
+				if (err)
+				return done(err);
+				if (!rows.length) {
+					req.flash('loginMessage', 'No account with that email address exists');//'No user found.')); // req.flash is the way to set flashdata using connect-flash
+					return res.redirect('/forgot');
+				}
+			  user=User();
+
+			  user.email=rows[0].email;
+			  user.resetPasswordToken = token;
+			  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+			  console.log(user);
+
+			  user.save(function(err) {
+				done(err, token, user);
+			  });
+			});
+		  },
+		  function(token, user, done) {
+			var smtpTransport = nodemailer.createTransport('SMTP', {
+			  service: 'SendGrid',
+			  auth: {
+				user: '!!! YOUR SENDGRID USERNAME !!!',
+				pass: '!!! YOUR SENDGRID PASSWORD !!!'
+			  }
+			});
+			var mailOptions = {
+			  to: user.email,
+			  from: 'passwordreset@demo.com',
+			  subject: 'Node.js Password Reset',
+			  text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+				'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+				'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+				'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+			};
+			smtpTransport.sendMail(mailOptions, function(err) {
+			  req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+			  done(err, 'done');
+			});
+		  }
+		], function(err) {
+		  if (err) return next(err);
+		  console.log(err)
+		  res.redirect('/forgot');
+		});
+	  });
 	// PROFILE SECTION =========================
 
 
