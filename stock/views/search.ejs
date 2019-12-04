@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Node Authentication</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<style>
+		body {
+			padding-top: 30px;
+			word-wrap: break-word;
+		}
+	</style>
+</head>
+
+<body>
+	<script>
+		function viewStock() {
+			var e = document.getElementById('select_stock');
+			var n = document.getElementById('select_time');
+			var stock = e.options[e.selectedIndex].value;
+			var time = n.options[n.selectedIndex].value;
+			window.location.href = `/show/${stock}/${time}`;
+		}
+	</script>
+	<div class="container">
+
+		<div class="page-header text-center">
+			<h1>Search Stocks</h1>
+			<a href="/logout" class="btn btn-default btn-sm">Logout</a>
+		</div>
+
+		<div class="row">
+
+			<div>
+				<span><strong>Select a Stock: </strong>
+					<select id="select_stock" name="stock">
+						<option value="AAPL">AAPL</option>
+						<option value="ABBV">ABBV</option>
+						<option value="ACB">ACB</option>
+						<option value="AMAT">AMAT</option>
+						<option value="AMD">AMD</option>
+						<option value="AMRN">AMRN</option>
+						<option value="ATUS">ATUS</option>
+						<option value="AUY">AUY</option>
+						<option value="BABA">BABA</option>
+						<option value="BAC">BAC</option>
+						<option value="BMY">BMY</option>
+						<option value="C">C</option>
+						<option value="CBS">CBS</option>
+						<option value="CGC">CGC</option>
+						<option value="CMCSA">CMCSA</option>
+						<option value="CNC">CNC</option>
+						<option value="CNP">CNP</option>
+						<option value="COG">COG</option>
+						<option value="CRON">CRON</option>
+						<option value="CSCO">CSCO</option>
+						<option value="CTL">CTL</option>
+						<option value="CVS">CVS</option>
+						<option value="CZR">CZR</option>
+						<option value="DHR">DHR</option>
+						<option value="DIS">DIS</option>
+						<option value="ECA">ECA</option>
+						<option value="ET">ET</option>
+						<option value="F">F</option>
+						<option value="FB">FB</option>
+						<option value="FCX">FCX</option>
+						<option value="FTCH">FTCH</option>
+						<option value="GE">GE</option>
+						<option value="GILD">GILD</option>
+						<option value="GM">GM</option>
+						<option value="GOLD">GOLD</option>
+						<option value="GRUB">GRUB</option>
+						<option value="HAL">HAL</option>
+						<option value="HBI">HBI</option>
+						<option value="HPE">HPE</option>
+						<option value="HPQ">HPQ</option>
+						<option value="INFY">INFY</option>
+						<option value="INTC">INTC</option>
+						<option value="ITUB">ITUB</option>
+						<option value="JD">JD</option>
+						<option value="JNJ">JNJ</option>
+						<option value="JPM">JPM</option>
+						<option value="KGC">KGC</option>
+						<option value="KHC">KHC</option>
+						<option value="KMI">KMI</option>
+						<option value="KO">KO</option>
+						<option value="LK">LK</option>
+						<option value="LYFT">LYFT</option>
+						<option value="M">M</option>
+						<option value="MO">MO</option>
+						<option value="MPW">MPW</option>
+						<option value="MRK">MRK</option>
+						<option value="MRO">MRO</option>
+						<option value="MRVL">MRVL</option>
+						<option value="MSFT">MSFT</option>
+						<option value="MU">MU</option>
+						<option value="NBL">NBL</option>
+						<option value="NLY">NLY</option>
+						<option value="NOK">NOK</option>
+						<option value="NVDA">NVDA</option>
+						<option value="OXY">OXY</option>
+						<option value="PCG">PCG</option>
+						<option value="PFE">PFE</option>
+						<option value="PG">PG</option>
+						<option value="PINS">PINS</option>
+						<option value="PTON">PTON</option>
+						<option value="QCOM">QCOM</option>
+						<option value="QGEN">QGEN</option>
+						<option value="RF">RF</option>
+						<option value="RIG">RIG</option>
+						<option value="ROKU">ROKU</option>
+						<option value="S">S</option>
+						<option value="SBUX">SBUX</option>
+						<option value="SCHW">SCHW</option>
+						<option value="SDC">SDC</option>
+						<option value="SIRI">SIRI</option>
+						<option value="SLB">SLB</option>
+						<option value="SNAP">SNAP</option>
+						<option value="SQ">SQ</option>
+						<option value="T">T</option>
+						<option value="TEVA">TEVA</option>
+						<option value="TWTR">TWTR</option>
+						<option value="UBER">UBER</option>
+						<option value="UNH">UNH</option>
+						<option value="V">V</option>
+						<option value="VALE">VALE</option>
+						<option value="VER">VER</option>
+						<option value="VIAB">VIAB</option>
+						<option value="VIPS">VIPS</option>
+						<option value="VZ">VZ</option>
+						<option value="WFC">WFC</option>
+						<option value="WMT">WMT</option>
+						<option value="WORK">WORK</option>
+						<option value="X">X</option>
+						<option value="XOM">XOM</option>
+						<option value="ZNGA">ZNGA</option>
+					</select>
+				</span>
+			</div>
+			<span>
+				<strong>Select the Time Period: </strong>
+				<select id="select_time" name="time">
+					<option value="wk">This Week</option>
+					<option value="1wk">Past Week</option>
+					<option value="mo">This Month</option>
+					<option value="yr">This Year</option>
+					<option value="5yr">Past 5 Years</option>
+				</select>
+			</span>
+		</div>
+		<a id="aLink" class="btn btn-default btm-sm">Submit</a>
+		<script>
+			var sub = document.getElementById('aLink');
+			sub.onclick = viewStock;
+		</script>
+	</div>
+</body>
+
+</html>

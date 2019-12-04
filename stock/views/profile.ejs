@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Node Authentication</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<style>
+		body {
+			padding-top: 30px;
+			word-wrap: break-word;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+
+		<div class="page-header text-center">
+			<h1> Profile Page</h1>
+			<a href="/logout" class="btn btn-default btn-sm">Logout</a>
+		</div>
+
+		<div class="row">
+
+			<!-- LOCAL INFORMATION -->
+			<div class="col-sm-6">
+				<div class="well">
+					<h3><span class="fa fa-user"></span>Profile Information</h3>
+
+					<% if (user.username) { %>
+					<p>
+						<strong>Username</strong>: <%= user.username %><br>
+						<strong>Password</strong>: ***********<br>
+					</p>
+
+
+					<% } %>
+
+				</div>
+				<a href="/edit_profile" class="btn btn-default btm-sm">Edit Info</a>
+			</div>
+			<div class="col-sm-6">
+				<div class="well">
+					<h3><span class="fa fa-user"></span>Personal Information</h3>
+					<p>
+						<strong>Email</strong>: <%= user.email %><br>
+						<strong>Address</strong>: <%= user.address %>
+					</p>
+				</div>
+			</div>
+			<a href="/search" class="btn btn-default btm-sm">Search Stocks</a>
+
+		</div>
+
+
+	</div>
+</body>
+
+</html>
