@@ -5,6 +5,20 @@
 	<title>Node Authentication</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<script>
+	function showDiv() {
+   document.getElementById('update_profile_div').style.display = "block";
+	}
+
+	function show_accounts(event)
+	{
+    var a = event.target;
+	}
+	</script>
 	<style>
 		body {
 			padding-top: 30px;
@@ -81,38 +95,143 @@
 			</nav>
 		</div>
 		<br>
-		<div class="row">
-
-			<!-- LOCAL INFORMATION -->
+		<h2>Profile</h2>
+    
+		<div class="panel-group" id="accordion">
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">View and Edit Profile</a>
+			  </h4>
+			</div>
+			<div id="collapse1" class="panel-collapse collapse in">
+			  <div class="panel-body">
+				  <!-- LOCAL INFORMATION -->
 			<div class="col-sm-6">
 				<div class="well">
-					<h3><span class="fa fa-user"></span>Profile Information</h3>
-
+					<h3><span class="fa fa-user"></span>Personal Information</h3>
+					
 					<% if (user.username) { %>
-					<p>
-						<strong>Username</strong>: <%= user.username %><br>
-						<strong>Password</strong>: ***********<br>
-						<strong>Email</strong>: <%= user.email %><br>
-						<strong>Address</strong>: <%= user.address %>
-					</p>
-
-
+						<p>
+							<strong>Username</strong>: <%= user.username %><br>
+							<strong>Password</strong>: ***********<br>
+							<strong>Email</strong>: <%= user.email %><br>
+							<strong>Address</strong>: <%= user.address %>
+						</p>
+						
+						
 					<% } %>
-
+						
 				</div>
-				<a href="/edit_profile" class="btn btn-default btm-sm">Edit Info</a>
-			</div>
-			<div class="col-sm-6">
-				<div class="well">
-					<h3><span class="fa fa-lock"></span>Bank Accounts</h3>
-					<p>
-
-					</p>
+				
+			
+				<a class="btn btn-default btm-sm" onclick="showDiv()">Edit Profile</a>
+				<div id="update_profile_div"  style="display:none;" class="answer_list" > 
+				
+					<form action="/update_profile" method="post">
+						<div class="form-group">
+							<label>Email</label>
+							<input type="text" class="form-control" name="email" value=<%= user.email %>>
+						</div>
+						<div class="form-group">
+							<label>Address</label>
+							<input type="text" class="form-control" name="address" value=<%= user.address %>>
+						</div>
+					
+		
+						<button type="submit" class="btn btn-warning btn-lg">Update</button>
+					</form>
+		
+				
 				</div>
+			
 			</div>
+			  </div>
+			</div>
+		  </div>
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Add Bank Accounts</a>
+			  </h4>
+			</div>
+			<div id="collapse2" class="panel-collapse collapse">
+			  <div class="panel-body">
+				  <form action="/add_bank_account" method="POST">
+					<div class="form-group">
+							<label>Account Number</label>
+							<input type="text" class="form-control" name="bank_acc_no">
+						</div>
+						<div class="form-group">
+							<label>Routing Number</label>
+							<input type="text" class="form-control" name="routing">
+						</div>
+					<button type="submit" class="btn btn-default btn-lg">Add Bank Account</button>
+				  </form></div>
+				
+			</div>
+		  </div>
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse3" onclick="show_accounts(this);">View Bank Accounts</a>
+			  </h4>
+			</div>
+			<div id="collapse3" class="panel-collapse collapse">
+			  <div class="panel-body"></div>
+			  <table class="table">
+					<tr>
+					   <th>Accounts</th>
+					</tr>
+				 
+					<% for (var i = 0; i < banks.account_nos.length;  i++) { %>
+					 <tr>
+					   <td><%= banks.account_nos[i] %></td>
+					 </tr>    
+					<% } %>
+				 </table>
+			</div>
+		  </div>
 
+
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Reload Balance</a>
+			  </h4>
+			</div>
+			<div id="collapse4" class="panel-collapse collapse">
+			  <div class="panel-body">
+				  <form action="/add_money" method="POST">
+					<div class="form-group">
+							
+							<button>Current Balance: <%= user.balance %></button>
+							<hr>
+							<label>Account Number</label>
+						
+							<select name="bank_acc_no" class="form-control">
+
+									<%
+									for ( var i = 0; i < banks.account_nos.length; i++ )
+									{
+										
+										%>
+										<option value='<%= banks.account_nos[i] %>'><%= banks.account_nos[i] %></option>
+										<%
+									}
+									%>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>Amount</label>
+							<input type="text" class="form-control" name="balance">
+						</div>
+					<button type="submit" class="btn btn-default btn-lg">Update Balance</button>
+				  </form></div>
+				
+			</div>
+		  </div>
 		</div>
-
 
 	</div>
 </body>
