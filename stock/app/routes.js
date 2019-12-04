@@ -47,7 +47,7 @@ module.exports = function (app, passport) {
 	app.post('/add_money', isLoggedIn, (req, res) => {
 		var x="op";
 		x=req.body.transfer;
-		if(x=="To"){
+		if(x=="Debit"){
 			req.body.balance=-1*req.body.balance;
 		}
 		
@@ -79,12 +79,19 @@ module.exports = function (app, passport) {
 		res.render('index.ejs');
 	});
 
+	app.get('/buy', function (req, res) {
+		res.render('buy.ejs');
+	});
+
 
 	app.get('/forgot', function(req, res) {
 		res.render('forgot', {
 		  user: req.user
 		});
 	  });
+
+
+
 
 	  app.post('/forgot', function(req, res, next) {
 		async.waterfall([
@@ -145,6 +152,76 @@ module.exports = function (app, passport) {
 	  });
 	// PROFILE SECTION =========================
 
+	app.get('/get_my_stocks', function (req, res) {
+		return_data = {}
+		const id=req.user.idUser;
+		query1 = "select * from current_stocks c, stocks s where `idStocks`=`stockid` and `userid`=" +id;
+		connection.query(query1, {}, function(err, results) {
+
+			console.log(query1);
+			//console.log(results);
+			stocklist={}
+			if(results.length>0){
+				console.log(results[1]);
+				stocklist={};
+				let Stock_Name=[];
+				let Company=[];
+				let Price=[];
+				let num_stocks=[];
+				let num_recur_days_buy=[];
+				let num_recur_days_sell=[];
+				let num_stocks_sell=[];
+				let num_stocks_buy=[];
+
+				for(let i=0;i<results.length;i++){
+					Company.push(results[i].Company);
+					Stock_Name.push(results[i].Stock_Name);
+					Price.push(results[i].Price);
+					num_stocks.push(results[i].num_stocks);
+					num_recur_days_buy.push(results[i].num_recur_days_buy);
+					num_recur_days_sell.push(results[i].num_recur_days_sell);
+					num_stocks_sell.push(results[i].num_stocks_sell);
+					num_stocks_buy.push(results[i].num_stocks_buy);
+
+					/*Stock:results.Stock_Name,
+					Company:results.Company,
+					Price:results.Price,
+					Number_Stocks:results.num_stocks,				
+					Recurring_buy:results.num_recur_days_buy,
+					Recurring_sell:results.num_recur_days_sell,
+					No_stocks_sell:results.num_stocks_sell,
+					No_stocks_buy:results.num_stocks_buy*/
+				}
+				console.log(Company);
+				stocklist={
+					userid:results[0].userid,
+					Stock:Stock_Name,
+					Company:Company,
+					Price:Price,
+					Number_Stocks:num_stocks,				
+					Recurring_buy:num_recur_days_buy,
+					Recurring_sell:num_recur_days_sell,
+					No_stocks_sell:num_stocks_sell,
+					No_stocks_buy:num_stocks_buy
+				};
+				return_data.stocklist = stocklist;
+				console.log(return_data)
+				res.render('mystocks.ejs', return_data);
+				
+			}
+			else{
+
+				return_data.stocklist = stocklist;
+				console.log(return_data)
+				res.render('mystocks.ejs', return_data);
+				
+			}
+			//console.log(return_data);
+	
+		});
+	});
+
+	
 
 	app.get('/profile', function (req, res) {
 		return_data = {}
@@ -185,6 +262,49 @@ module.exports = function (app, passport) {
 	app.get('/search', isLoggedIn, function (req, res) {
 		res.render('search.ejs');
 	});
+
+
+	// SHOW STOCK PRICES
+	app.get('/buy1', isLoggedIn, function (req, res) {
+		var stock = req.params.stock;
+		var time = req.params.time;
+
+		//get price info from exchange app.
+		function getStocksCurrent() {
+			const url = 'http://localhost:8081/api/getStocksCurrent';
+			const data = {
+				symbol: stock
+			};
+
+			return axios({
+				method: 'post',
+				url: url,
+				data: data
+			});
+		}
+		axios.all([getStocksCurrent()]).then((result) => {
+			console.log('all_stocks: ', result[0].data.company);
+		
+
+			let stock = [];
+			let company = [];
+			let price = [];
+
+			for (let i = result[0].length - 1; i >= 0; i--) {
+				prices.push(result[0].data.price.toFixed(2));
+				//prices.push(result[].data.history[i].price.toFixed(2));
+				//dates.push(moment(result[1].data.history[i].timestamp).format('MM-DD-YYYY h:mm:ss a'));
+			}
+
+			/*res.render('showstock.ejs', {
+				utils: { stock, company: result[0].data.company, time, curr: result[0].data.price.toFixed(2), prices, dates }
+			});*/
+		}).catch(err => console.log(err));
+
+
+	});
+
+	
 
 	// SHOW STOCK PRICES
 	app.get('/show/:stock/:time', isLoggedIn, function (req, res) {
