@@ -197,7 +197,7 @@
 		  <div class="panel panel-default">
 			<div class="panel-heading">
 			  <h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Reload Balance</a>
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse4"> Transfer Balance</a>
 			  </h4>
 			</div>
 			<div id="collapse4" class="panel-collapse collapse">
@@ -207,8 +207,10 @@
 							
 							<button>Current Balance: <%= user.balance %></button>
 							<hr>
-							<label>Account Number</label>
-						
+							<input type="radio" class="form-group" name="transfer" value="Credit"> Credit<br>
+							<input type="radio" class="form-group" name="transfer" value="Debit"> Debit<br>
+							<label>Account Number</transfer>
+								
 							<select name="bank_acc_no" class="form-control">
 
 									<%
