@@ -93,7 +93,7 @@ module.exports = function (app, passport) {
 
 			for (let i = result[1].data.history.length - 1; i >= 0; i--) {
 				prices.push(result[1].data.history[i].price.toFixed(2));
-				dates.push(moment(result[1].data.history[i].timestamp).format('MM-DD-YYYY'));
+				dates.push(moment(result[1].data.history[i].timestamp).format('MM-DD-YYYY h:mm:ss a'));
 			}
 
 			res.render('showstock.ejs', {
