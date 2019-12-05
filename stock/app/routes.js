@@ -19,6 +19,8 @@ module.exports = function (app, passport) {
 	// normal routes ===============================================================
 
 
+	//add bank accounts
+
 	app.post('/add_bank_account', isLoggedIn, (req, res) => {
 		connection.query("Insert into bank(`userid`,`account_no`,`routing_no`) values('" +req.user.idUser+ "','" +req.body.bank_acc_no+ "','" +req.body.routing + "')",
 		function (error, results, fields) {
@@ -31,7 +33,7 @@ module.exports = function (app, passport) {
 		});
 	});
 
-
+//update profile
 	app.post('/update_profile', isLoggedIn, (req, res) => {
 		connection.query("update users set `address`='" +req.body.address+ "',`email`='" +req.body.email+ "' where `idUser`='" +req.user.idUser+"'",
 		function (error, results, fields) {
@@ -44,6 +46,7 @@ module.exports = function (app, passport) {
 		});
 	});
 
+//Credit/Debit
 	app.post('/add_money', isLoggedIn, (req, res) => {
 		var x="op";
 		x=req.body.transfer;
@@ -62,6 +65,7 @@ module.exports = function (app, passport) {
 		});
 	});
 
+	//Update schedule-not working
 	app.post('/update_schedule', isLoggedIn, (req, res) => {
 		connection.query("update users set `balance`=`balance`+''" +req.body.balance+ "where `idUser=''" +req.user.idUser,
 		function (error, results, fields) {
@@ -80,75 +84,9 @@ module.exports = function (app, passport) {
 	});
 
 
-	app.get('/forgot', function(req, res) {
-		res.render('forgot', {
-		  user: req.user
-		});
-	  });
-
-
-
-
-	  app.post('/forgot', function(req, res, next) {
-		async.waterfall([
-		  function(done) {
-			crypto.randomBytes(20, function(err, buf) {
-			  var token = buf.toString('hex');
-			  done(err, token);
-			});
-		  },
-		  function(token, done) {
-
-			connection.query("SELECT * FROM " + dbconfig.users_table + " WHERE `email` = '" + req.body.email + "'", function(err, rows){
-				if (err)
-				return done(err);
-				if (!rows.length) {
-					req.flash('loginMessage', 'No account with that email address exists');//'No user found.')); // req.flash is the way to set flashdata using connect-flash
-					return res.redirect('/forgot');
-				}
-			  user=User();
-
-			  user.email=rows[0].email;
-			  user.resetPasswordToken = token;
-			  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-			  console.log(user);
-
-			  user.save(function(err) {
-				done(err, token, user);
-			  });
-			});
-		  },
-		  function(token, user, done) {
-			var smtpTransport = nodemailer.createTransport('SMTP', {
-			  service: 'SendGrid',
-			  auth: {
-				user: '!!! YOUR SENDGRID USERNAME !!!',
-				pass: '!!! YOUR SENDGRID PASSWORD !!!'
-			  }
-			});
-			var mailOptions = {
-			  to: user.email,
-			  from: 'passwordreset@demo.com',
-			  subject: 'Node.js Password Reset',
-			  text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-				'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-				'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-				'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-			};
-			smtpTransport.sendMail(mailOptions, function(err) {
-			  req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-			  done(err, 'done');
-			});
-		  }
-		], function(err) {
-		  if (err) return next(err);
-		  console.log(err)
-		  res.redirect('/forgot');
-		});
-	  });
 	// PROFILE SECTION =========================
 
-	app.get('/get_my_stocks', isLoggedIn, function (req, res) {
+	app.get('/get_my_stocks', function (req, res) {
 		return_data = {}
 		const id=req.user.idUser;
 		query1 = "select * from current_stocks c, stocks s where `idStocks`=`stockid` and `userid`=" +id;
@@ -179,14 +117,7 @@ module.exports = function (app, passport) {
 					num_stocks_sell.push(results[i].num_stocks_sell);
 					num_stocks_buy.push(results[i].num_stocks_buy);
 
-					/*Stock:results.Stock_Name,
-					Company:results.Company,
-					Price:results.Price,
-					Number_Stocks:results.num_stocks,				
-					Recurring_buy:results.num_recur_days_buy,
-					Recurring_sell:results.num_recur_days_sell,
-					No_stocks_sell:results.num_stocks_sell,
-					No_stocks_buy:results.num_stocks_buy*/
+		
 				}
 				console.log(Company);
 				stocklist={
@@ -218,8 +149,8 @@ module.exports = function (app, passport) {
 	});
 
 	
-
-	app.get('/profile', isLoggedIn, function (req, res) {
+//profile page
+	app.get('/profile', function (req, res) {
 		return_data = {}
 		const id=req.user.idUser;
 		query1 = "select username, address, email, balance from users where `idUser`=" +id;
@@ -230,9 +161,7 @@ module.exports = function (app, passport) {
                 address:results[0].address,
                 email:results[0].email,
                 balance:results[0].balance
-			};
-			if (!profile.email) profile.email = '';
-			if (!profile.address) profile.address = '';
+            };
 			return_data.user = profile;
 			//console.log(return_data);
 			
@@ -257,46 +186,46 @@ module.exports = function (app, passport) {
 
 
 	// STOCK SEARCH =========================
-	app.get('/search', function (req, res) {
+	app.get('/search', isLoggedIn, function (req, res) {
 		res.render('search.ejs');
 	});
 
+	//get selected stocks for buying
+	app.get('/buy_stocks:data', isLoggedIn, function (req, res) {
+		var data=(req.params.data);
+		console.log(data.substring(1,data.length));
+	//	res.render('search.ejs');
+	});
 
-	// SHOW STOCK PRICES
+	
+	// SHOW current prices for all stocks
 	app.get('/buy', isLoggedIn, function (req, res) {
-		var stock = req.params.stock;
-		var time = req.params.time;
-
 		//get price info from exchange app.
 		function getStocksCurrent() {
-			const url = 'http://localhost:8081/api/getStocksCurrent';
-			const data = {
-				symbol: stock
-			};
-
+			const url = 'http://localhost:8081/api/getStocksCurrent'
 			return axios({
 				method: 'post',
-				url: url,
-				data: data
+				url: url
 			});
 		}
 		axios.all([getStocksCurrent()]).then((result) => {
-			console.log('all_stocks: ', result[0].data.company);
+			console.log('all_stocks:', result[0].data.list[0]);
 		
 
 			let stock = [];
 			let company = [];
 			let price = [];
 
-			for (let i = result[0].length - 1; i >= 0; i--) {
-				prices.push(result[0].data.price.toFixed(2));
-				//prices.push(result[].data.history[i].price.toFixed(2));
-				//dates.push(moment(result[1].data.history[i].timestamp).format('MM-DD-YYYY h:mm:ss a'));
-			}
+			for (let i = result[0].data.list.length - 1; i >= 0; i--) {
+				price.push(result[0].data.list[i].price.toFixed(2));
+				company.push(result[0].data.list[i].company);
+				stock.push(result[0].data.list[i].Stock_Name);
+				
+				}
 
-			/*res.render('showstock.ejs', {
-				utils: { stock, company: result[0].data.company, time, curr: result[0].data.price.toFixed(2), prices, dates }
-			});*/
+			res.render('buy.ejs', {
+				curr_stocks: { stock:stock, company:company, price:price }
+			});
 		}).catch(err => console.log(err));
 
 
@@ -305,7 +234,7 @@ module.exports = function (app, passport) {
 	
 
 	// SHOW STOCK PRICES
-	app.get('/show/:stock/:time', function (req, res) {
+	app.get('/show/:stock/:time', isLoggedIn, function (req, res) {
 		var stock = req.params.stock;
 		var time = req.params.time;
 
