@@ -9,16 +9,39 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-	<script>
-	function showDiv() {
-   document.getElementById('update_profile_div').style.display = "block";
-	}
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-	function show_accounts(event)
-	{
-    var a = event.target;
-	}
-	</script>
+	<script type="text/javascript">
+    function GetSelected() {
+        //Reference the Table.
+        var grid = document.getElementById("table");
+ 
+        //Reference the CheckBoxes in Table.
+        var checkBoxes = grid.getElementsByTagName("INPUT");
+		var stocks=[];
+		var company=[];
+		var prices=[];
+        //Loop through the CheckBoxes.
+        for (var i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                var row = checkBoxes[i].parentNode.parentNode;
+				stocks.push(row.cells[1].innerHTML);
+				company.push(row.cells[2].innerHTML);
+				company.push(row.cells[3].innerHTML);
+            }
+		}
+		var message = {stocks:stocks,company:company,prices:prices};
+		var m=(JSON.stringify(message));
+		console.log(m);
+		document.getElementById('buy_button').href=`/buy_stocks:${m}`
+				
+		 
+		
+    }
+</script>
+
+
+
 	<style>
 		body {
 			padding-top: 30px;
@@ -94,7 +117,40 @@
 					</nav>
 				</div>
 				<br>
-	
+				<a id="buy_button" style="float: right; margin-top: 30px;" href="" class="btn btn-default btn-sm">Select Stocks</a>
+		
+			
+				<input type="button" onclick="GetSelected()" value="Select Stocks" />
+
+				<table  id="table" class="table table-inverse" data-toggle="table" data-filter-control="true" data-show-search-clear-button="true">
+						<thead> 
+						<tr>
+						 
+						  <th>&nbsp;</th>
+						  <th  data-sortable="true">Stock</th>
+						  <th  data-sortable="true">Company</th>
+						  <th  data-sortable="true">Price</th>
+						
+						</tr>
+						</thead>
+					  <tbody>
+						<% for(var i=0; i < curr_stocks.stock.length; i++) { %>
+					   <tr>
+						  <td><input type="checkbox"/></td>
+						 <td><%= curr_stocks.stock[i] %></td>
+						 <td><%= curr_stocks.company[i] %></td>
+						 <td><%= curr_stocks.price[i] %></td>
+						
+				
+				
+					   </tr>
+					<% } %>
+					  </tbody>
+				
+					</table>
+					<br />
+				</form>
+			
 
 	</div>
 </body>
