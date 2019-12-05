@@ -61,6 +61,17 @@
             font-size: medium;
         }
     </style>
+    <script>
+        function check() {
+            var date = new Date();
+            if ((date.getDay() == 0) || (date.getDay() == 6) || (date.getHours() < 8) || (date.getHours() > 16)) {
+                alert('Transactions cannot be made outside of business hours.');
+            } else {
+                window.location.href = '/buy';
+                alert('Transaction request has been received.');
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -78,7 +89,6 @@
                 <a class="p-2 text-muted" href="/search">Search Stocks</a>
                 <a class="p-2 text-muted" href="">Buy Stocks</a>
                 <a class="p-2 text-muted" href="">Sell Stocks</a>
-                <a class="p-2 text-muted" href="">Transfer Funds</a>
             </nav>
         </div>
         <br>
@@ -98,7 +108,7 @@
 
                     <% } %>
                     <a href="/search" class="btn btn-default btm-sm">Search Stocks</a>
-                    <a href="/buy" class="btn btn-default btm-sm">Buy</a>
+                    <a onclick="check()" class="btn btn-default btm-sm">Buy 1 Stock</a>
                 </div>
             </div>
             <h3>Current Price: $<%= utils.curr %></h3>

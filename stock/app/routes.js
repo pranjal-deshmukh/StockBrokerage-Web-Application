@@ -79,10 +79,6 @@ module.exports = function (app, passport) {
 		res.render('index.ejs');
 	});
 
-	app.get('/buy', function (req, res) {
-		res.render('buy.ejs');
-	});
-
 
 	app.get('/forgot', function(req, res) {
 		res.render('forgot', {
@@ -152,7 +148,7 @@ module.exports = function (app, passport) {
 	  });
 	// PROFILE SECTION =========================
 
-	app.get('/get_my_stocks', function (req, res) {
+	app.get('/get_my_stocks', isLoggedIn, function (req, res) {
 		return_data = {}
 		const id=req.user.idUser;
 		query1 = "select * from current_stocks c, stocks s where `idStocks`=`stockid` and `userid`=" +id;
@@ -223,7 +219,7 @@ module.exports = function (app, passport) {
 
 	
 
-	app.get('/profile', function (req, res) {
+	app.get('/profile', isLoggedIn, function (req, res) {
 		return_data = {}
 		const id=req.user.idUser;
 		query1 = "select username, address, email, balance from users where `idUser`=" +id;
@@ -234,7 +230,9 @@ module.exports = function (app, passport) {
                 address:results[0].address,
                 email:results[0].email,
                 balance:results[0].balance
-            };
+			};
+			if (!profile.email) profile.email = '';
+			if (!profile.address) profile.address = '';
 			return_data.user = profile;
 			//console.log(return_data);
 			
@@ -259,13 +257,13 @@ module.exports = function (app, passport) {
 
 
 	// STOCK SEARCH =========================
-	app.get('/search', isLoggedIn, function (req, res) {
+	app.get('/search', function (req, res) {
 		res.render('search.ejs');
 	});
 
 
 	// SHOW STOCK PRICES
-	app.get('/buy1', isLoggedIn, function (req, res) {
+	app.get('/buy', isLoggedIn, function (req, res) {
 		var stock = req.params.stock;
 		var time = req.params.time;
 
@@ -307,7 +305,7 @@ module.exports = function (app, passport) {
 	
 
 	// SHOW STOCK PRICES
-	app.get('/show/:stock/:time', isLoggedIn, function (req, res) {
+	app.get('/show/:stock/:time', function (req, res) {
 		var stock = req.params.stock;
 		var time = req.params.time;
 
