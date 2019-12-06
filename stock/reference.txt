@@ -1,0 +1,19 @@
+
+// for buy
+"INSERT INTO " + `current_stocks`  +
+ " values ('" + obj.userid + "','" + "(select `idStocks` from  stocks where 
+  `Stock_Name`='"+obj.stock_name+"'  order by `Timestamp` desc limit 1),'" +  
+  obj.num_stocks + "','" +obj.num_recur_days_sell + "','" +  
+  obj.num_recur_days_buy + "','" +obj.num_stocks_sell + "','"+obj.num_stocks_buy+"')"
+  
+"update users set `balance`=`balance`-'" +(obj.price*obj.num_stocks)+' where `idUser`='" +obj.idUser+"'"
+  
+  //for sell
+
+  "update current_stocks 
+  set `num_stocks`=`num_stocks` '"-obj.num_stocks_sold+"'"
+  + "' where `idUser`='" +obj.idUser+"'" 
+   
+"update users set `balance`=`balance`+'" +(obj.price*obj.num_stocks)+ "' where `idUser`='" +obj.idUser+"'"
+  
+  
