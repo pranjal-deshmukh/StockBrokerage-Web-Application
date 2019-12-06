@@ -102,6 +102,7 @@
         </tr>
         </thead>
       <tbody>
+		<% if (stocklist.length > 0) { %>
         <% for(var i=0; i < stocklist.Stock.length; i++) { %>
        <tr>
          
@@ -118,7 +119,8 @@
 
 
        </tr>
-    <% } %>
+	<% } %>
+	<% } %>
       </tbody>
 
 	</table>
