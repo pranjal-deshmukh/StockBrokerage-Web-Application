@@ -9,7 +9,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" 
-    crossorigin="anonymous">
+	crossorigin="anonymous">
+	<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.css">
    	<style>
 		body {
 			padding-top: 30px;
@@ -77,7 +78,7 @@
 				<div class="nav-scroller py-1">
 					<nav class="nav d-flex justify-content-between">
 						<a class="p-2 text-muted" href="/profile">My Profile</a>
-						<a class="p-2 text-muted" href="/get_my_stocks">My Stocks</a>
+						<a class="p-2 text-muted" href="">My Stocks</a>
 						<a class="p-2 text-muted" href="/search">Search Stocks</a>
 						<a class="p-2 text-muted" href="/buy">Buy Stocks</a>
 						<a class="p-2 text-muted" href="/sell">Sell Stocks</a>
@@ -85,8 +86,8 @@
 				</div>
 				<br>
 	
-    
-        <table  id="table" class="table table-inverse" data-toggle="table" data-filter-control="true" data-show-search-clear-button="true">
+		<form action='/update_schedule' method="post">
+        <table id="table" class="table-editable" data-toggle="table" data-filter-control="true" data-show-search-clear-button="true">
         <thead> 
         <tr>
           <th data-filter-control="input" data-sortable="true">Stock</th>
@@ -104,14 +105,15 @@
         <% for(var i=0; i < stocklist.Stock.length; i++) { %>
        <tr>
          
-         <td><%= stocklist.Stock[i] %></t   d>
+         <td><%= stocklist.Stock[i] %></td>
          <td><%= stocklist.Company[i] %></td>
          <td><%= stocklist.Price[i] %></td>
          <td><%= stocklist.Number_Stocks[i] %></td>
-         <td><%= stocklist.Recurring_buy[i] %></td>
-         <td><%= stocklist.Recurring_sell[i] %></td>
-         <td><%= stocklist.No_stocks_buy[i] %></td>
-         <td><%= stocklist.No_stocks_sell[i] %></td>
+         <td contenteditable="true" name=<%= stocklist.Stock[i] %>.concat("Recurring_buy")><%= stocklist.Recurring_buy[i] %></td>
+         <td contenteditable='true' name=<%= stocklist.Stock[i] %>.concat("Recurring_sell") ><%= stocklist.Recurring_sell[i] %></td>
+         <td contenteditable='true' name=<%= stocklist.Stock[i] %>.concat("No_stocks_buy")><%= stocklist.No_stocks_buy[i] %></td>
+		 <td contenteditable='true' name=<%= stocklist.Stock[i] %>.concat("No_stocks_sell")><%= stocklist.No_stocks_sell[i] %></td>
+		 <td contenteditable="true" style="display:none;"></td>
 
 
 
@@ -119,23 +121,21 @@
     <% } %>
       </tbody>
 
-    </table>
-	<script>
-            $(function() {
-              $('#table').bootstrapTable()
-            })
-          </script>
+	</table>
+	<input type="submit" />
+	</form>
+				
+
     </div>
     
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.js"></script>
 	
 	<script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.js"></script>
-<script src="https://unpkg.com/bootstrap-table@1.15.4/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
- 
-
+<script src="https://unpkg.com/bootstrap-table@1.15.4/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>	
 </body>
 
 </html>
