@@ -9,11 +9,77 @@ var nodemailer = require('nodemailer');
 var connection = mysql.createConnection(dbconfig.connection);
 
 connection.query('USE ' + dbconfig.database);
+
+class Queue {
+	// Array is used to implement a Queue 
+	constructor() {
+		this.items = [];
+	}
+
+	// Functions to be implemented 
+	// enqueue(item) 
+	enqueue(element) {
+		// adding element to the queue 
+		this.items.push(element);
+	}
+	// dequeue() 
+	dequeue() {
+		// removing element from the queue 
+		// returns underflow when called  
+		// on empty queue 
+		if (this.isEmpty())
+			return "Underflow";
+		return this.items.shift();
+	}
+	// front() 
+	front() {
+		// returns the Front element of  
+		// the queue without removing it. 
+		if (this.isEmpty())
+			return "No elements in Queue";
+		return this.items[0];
+	}
+	// isEmpty()
+	isEmpty() {
+		// return true if the queue is empty. 
+		return this.items.length == 0;
+	}
+	// printQueue() 
+	printQueue() {
+		var str = "";
+		for (var i = 0; i < this.items.length; i++)
+			str += this.items[i] + " ";
+		return str;
+	}
+}
+
+var buy_queue = new Queue();
+var sell_queue = new Queue();
+
+function submitBuy() {
+		let item = buy_queue.dequeue();
+		if (item !== 'Underflow') {
+			//item in queue, get it and process
+			console.log('buy queue data', item);
+
+			connection.query("INSERT INTO " + `current_stocks`  +
+			" values ('" + obj.userid + "','" + "(select `idStocks` from  stocks where `Stock_Name`='"+obj.stock_name+"'  order by `Timestamp` desc limit 1),'" +  
+			 obj.num_stocks + "','" +obj.num_recur_days_sell + "','" +  
+			 obj.num_recur_days_buy + "','" +obj.num_stocks_sell + "','"+obj.num_stocks_buy+"')",
+			function (error, results, fields) {
+				if (error) throw error;
+			});
+
+			console.log('Buy Transaction complete.');
+		}
+}
+
 module.exports = function (app, passport) {
 	var async = require('async');
 	var axios = require('axios');
 	var moment = require('moment');
 	var crypto = require('crypto');
+
 	//var queries = require('./queries');
 
 	// normal routes ===============================================================
@@ -22,60 +88,60 @@ module.exports = function (app, passport) {
 	//add bank accounts
 
 	app.post('/add_bank_account', isLoggedIn, (req, res) => {
-		connection.query("Insert into bank(`userid`,`account_no`,`routing_no`) values('" +req.user.idUser+ "','" +req.body.bank_acc_no+ "','" +req.body.routing + "')",
-		function (error, results, fields) {
-			if (error) throw error;
-	
-			console.log('Inserting bank details');
-	
-			res.redirect('/profile');
-			
-		});
+		connection.query("Insert into bank(`userid`,`account_no`,`routing_no`) values('" + req.user.idUser + "','" + req.body.bank_acc_no + "','" + req.body.routing + "')",
+			function (error, results, fields) {
+				if (error) throw error;
+
+				console.log('Inserting bank details');
+
+				res.redirect('/profile');
+
+			});
 	});
 
-//update profile
+	//update profile
 	app.post('/update_profile', isLoggedIn, (req, res) => {
-		connection.query("update users set `address`='" +req.body.address+ "',`email`='" +req.body.email+ "' where `idUser`='" +req.user.idUser+"'",
-		function (error, results, fields) {
-			if (error) throw error;
-	
-			console.log('Updating profile');
-	
-			res.redirect('/profile');
-			
-		});
+		connection.query("update users set `address`='" + req.body.address + "',`email`='" + req.body.email + "' where `idUser`='" + req.user.idUser + "'",
+			function (error, results, fields) {
+				if (error) throw error;
+
+				console.log('Updating profile');
+
+				res.redirect('/profile');
+
+			});
 	});
 
-//Credit/Debit
+	//Credit/Debit
 	app.post('/add_money', isLoggedIn, (req, res) => {
-		var x="op";
-		x=req.body.transfer;
-		if(x=="Debit"){
-			req.body.balance=-1*req.body.balance;
+		var x = "op";
+		x = req.body.transfer;
+		if (x == "Debit") {
+			req.body.balance = -1 * req.body.balance;
 		}
-		
-		connection.query("update users set `balance`=`balance`+'" +req.body.balance+ "' where `idUser`='" +req.user.idUser+"'",
-		function (error, results, fields) {
-			if (error) throw error;
-			
-			console.log('Updating balance');
-	
-			res.redirect('/profile');
-			
-		});
+
+		connection.query("update users set `balance`=`balance`+'" + req.body.balance + "' where `idUser`='" + req.user.idUser + "'",
+			function (error, results, fields) {
+				if (error) throw error;
+
+				console.log('Updating balance');
+
+				res.redirect('/profile');
+
+			});
 	});
 
 	//Update schedule-not working
 	app.post('/update_schedule', isLoggedIn, (req, res) => {
-		connection.query("update users set `balance`=`balance`+''" +req.body.balance+ "where `idUser=''" +req.user.idUser,
-		function (error, results, fields) {
-			if (error) throw error;
-	
-			console.log('Updating balance');
-	
-			res.redirect('/profile');
-			
-		});
+		connection.query("update users set `balance`=`balance`+''" + req.body.balance + "where `idUser=''" + req.user.idUser,
+			function (error, results, fields) {
+				if (error) throw error;
+
+				console.log('Updating balance');
+
+				res.redirect('/profile');
+
+			});
 	});
 
 	// show the home page (will also have our login links)
@@ -88,26 +154,26 @@ module.exports = function (app, passport) {
 
 	app.get('/get_my_stocks', isLoggedIn, function (req, res) {
 		return_data = {}
-		const id=req.user.idUser;
-		query1 = "select * from current_stocks c, stocks s where `idStocks`=`stockid` and `userid`=" +id;
-		connection.query(query1, {}, function(err, results) {
+		const id = req.user.idUser;
+		query1 = "select * from current_stocks c, stocks s where `idStocks`=`stockid` and `userid`=" + id;
+		connection.query(query1, {}, function (err, results) {
 
 			console.log(query1);
 			//console.log(results);
-			stocklist={}
-			if(results.length>0){
+			stocklist = {}
+			if (results.length > 0) {
 				console.log(results[1]);
-				stocklist={};
-				let Stock_Name=[];
-				let Company=[];
-				let Price=[];
-				let num_stocks=[];
-				let num_recur_days_buy=[];
-				let num_recur_days_sell=[];
-				let num_stocks_sell=[];
-				let num_stocks_buy=[];
+				stocklist = {};
+				let Stock_Name = [];
+				let Company = [];
+				let Price = [];
+				let num_stocks = [];
+				let num_recur_days_buy = [];
+				let num_recur_days_sell = [];
+				let num_stocks_sell = [];
+				let num_stocks_buy = [];
 
-				for(let i=0;i<results.length;i++){
+				for (let i = 0; i < results.length; i++) {
 					Company.push(results[i].Company);
 					Stock_Name.push(results[i].Stock_Name);
 					Price.push(results[i].Price);
@@ -117,70 +183,70 @@ module.exports = function (app, passport) {
 					num_stocks_sell.push(results[i].num_stocks_sell);
 					num_stocks_buy.push(results[i].num_stocks_buy);
 
-		
+
 				}
 				console.log(Company);
-				stocklist={
-					userid:results[0].userid,
-					Stock:Stock_Name,
-					Company:Company,
-					Price:Price,
-					Number_Stocks:num_stocks,				
-					Recurring_buy:num_recur_days_buy,
-					Recurring_sell:num_recur_days_sell,
-					No_stocks_sell:num_stocks_sell,
-					No_stocks_buy:num_stocks_buy
+				stocklist = {
+					userid: results[0].userid,
+					Stock: Stock_Name,
+					Company: Company,
+					Price: Price,
+					Number_Stocks: num_stocks,
+					Recurring_buy: num_recur_days_buy,
+					Recurring_sell: num_recur_days_sell,
+					No_stocks_sell: num_stocks_sell,
+					No_stocks_buy: num_stocks_buy
 				};
 				return_data.stocklist = stocklist;
 				console.log(return_data)
 				res.render('mystocks.ejs', return_data);
-				
+
 			}
-			else{
+			else {
 
 				return_data.stocklist = stocklist;
 				console.log(return_data)
 				res.render('mystocks.ejs', return_data);
-				
+
 			}
 			//console.log(return_data);
-	
+
 		});
 	});
 
-	
-//profile page
+
+	//profile page
 	app.get('/profile', isLoggedIn, function (req, res) {
 		return_data = {}
-		const id=req.user.idUser;
-		query1 = "select username, address, email, balance from users where `idUser`=" +id;
-		query2 = "select account_no from bank where `userid`=" +id;
-		connection.query(query1, {}, function(err, results) {
-			profile={
-                username:results[0].username,
-                address:results[0].address,
-                email:results[0].email,
-                balance:results[0].balance
+		const id = req.user.idUser;
+		query1 = "select username, address, email, balance from users where `idUser`=" + id;
+		query2 = "select account_no from bank where `userid`=" + id;
+		connection.query(query1, {}, function (err, results) {
+			profile = {
+				username: results[0].username,
+				address: results[0].address,
+				email: results[0].email,
+				balance: results[0].balance
 			};
 			if (!profile.email) profile.email = '';
 			if (!profile.address) profile.address = '';
 			return_data.user = profile;
 			//console.log(return_data);
-			
-			connection.query(query2, {}, function(err, results) {
-				var accounts=[];
+
+			connection.query(query2, {}, function (err, results) {
+				var accounts = [];
 				console.log(results);
 				for (let i = results.length - 1; i >= 0; i--) {
 					accounts.push(results[i].account_no);
 				}
-				bank={
-					account_nos:accounts
+				bank = {
+					account_nos: accounts
 				};
 				return_data.banks = bank;
 				console.log(return_data);
 				res.render('profile.ejs', return_data);
-			
-				
+
+
 			});
 		});
 	});
@@ -194,12 +260,18 @@ module.exports = function (app, passport) {
 
 	//get selected stocks for buying
 	app.get('/buy_stocks:data', isLoggedIn, function (req, res) {
-		var data=(req.params.data);
-		console.log(data.substring(1,data.length));
-	//	res.render('search.ejs');
+		var data = JSON.parse(req.params.data.substring(1, req.params.data.length));
+		// console.log('in routes.js ' + data.substring(1, data.length));
+		Object.assign(data, req.user);
+		//sleep before adding to queue
+		sleep(5000).then(() => {
+		    //send data to queue
+			buy_queue.enqueue(data);
+		  })
+		res.redirect('/buy');
 	});
 
-	
+
 	// SHOW current prices for all stocks
 	app.get('/buy', isLoggedIn, function (req, res) {
 		//get price info from exchange app.
@@ -211,8 +283,8 @@ module.exports = function (app, passport) {
 			});
 		}
 		axios.all([getStocksCurrent()]).then((result) => {
-			console.log('all_stocks:', result[0].data.list[0]);
-		
+			// console.log('all_stocks:', result[0].data.list[0]);
+
 
 			let stock = [];
 			let company = [];
@@ -222,18 +294,18 @@ module.exports = function (app, passport) {
 				price.push(result[0].data.list[i].price.toFixed(2));
 				company.push(result[0].data.list[i].company);
 				stock.push(result[0].data.list[i].Stock_Name);
-				
-				}
+
+			}
 
 			res.render('buy.ejs', {
-				curr_stocks: { stock:stock, company:company, price:price }
+				curr_stocks: { stock: stock, company: company, price: price }
 			});
 		}).catch(err => console.log(err));
 
 
 	});
 
-	
+
 
 	// SHOW STOCK PRICES
 	app.get('/show/:stock/:time', function (req, res) {
@@ -386,7 +458,6 @@ module.exports = function (app, passport) {
 		res.redirect('/invalid')
 	});
 
-
 };
 
 // route middleware to ensure user is logged in
@@ -396,3 +467,9 @@ function isLoggedIn(req, res, next) {
 
 	res.redirect('/');
 }
+
+const sleep = (milliseconds) => {
+	return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+setInterval(submitBuy, 500);

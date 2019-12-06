@@ -27,16 +27,14 @@
                 var row = checkBoxes[i].parentNode.parentNode;
 				stocks.push(row.cells[1].innerHTML);
 				company.push(row.cells[2].innerHTML);
-				company.push(row.cells[3].innerHTML);
+				prices.push(row.cells[3].innerHTML);
             }
 		}
 		var message = {stocks:stocks,company:company,prices:prices};
 		var m=JSON.stringify(message);
-		console.log(m);
-		document.getElementById('buy_button').href=`/buy_stocks:${m}`
-				
-		 
-		
+		console.log('in buy.ejs' + m);
+		document.getElementById('buy_button').href=`/buy_stocks:${m}`					 
+		window.alert('Buy request submitted');
     }
 </script>
 
@@ -116,10 +114,7 @@
 					</nav>
 				</div>
 				<br>
-				<a id="buy_button" style="float: right; margin-top: 30px;" href="" class="btn btn-default btn-sm">Select Stocks</a>
-		
-			
-				<input type="button" onclick="GetSelected()" value="Select Stocks" />
+				<a id="buy_button" style="float: right; margin-top: 30px;" href="" onclick="GetSelected()" class="btn btn-default btn-sm">Buy Selected Stocks</a>
 
 				<table  id="table" class="table table-inverse" data-toggle="table" data-filter-control="true" data-show-search-clear-button="true">
 						<thead> 
