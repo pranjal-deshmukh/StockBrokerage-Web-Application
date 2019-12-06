@@ -68,7 +68,7 @@ function submitBuy() {
 			total_price = total_price + (parseInt(item.prices[i]) * parseInt(item.no_stocks[i]));
 		}
 		console.log('Total transaction price', total_price);
-		if (item.balance - total_price > 0) {
+		if (item.balance - total_price >= 0) {
 
 			for (var i = 0; i < item.stocks.length; i++) {
 				connection.query("INSERT INTO " + `current_stocks` +
