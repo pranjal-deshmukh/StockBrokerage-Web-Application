@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+
+<head>
+		<title>Stock Brokerage</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" 
+	crossorigin="anonymous">
+	<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.css">
+   	<style>
+		body {
+			padding-top: 30px;
+			word-wrap: break-word;
+		}
+
+		.nav-scroller {
+			position: relative;
+			z-index: 2;
+			height: 2.75rem;
+			overflow-y: hidden;
+		}
+
+		.nav-scroller .nav {
+			display: -ms-flexbox;
+			display: flex;
+			-ms-flex-wrap: nowrap;
+			flex-wrap: nowrap;
+			padding-bottom: 1rem;
+			margin-top: -1px;
+			overflow-x: auto;
+			text-align: center;
+			white-space: nowrap;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.nav-scroller .nav-link {
+			padding-top: .75rem;
+			padding-bottom: .75rem;
+			font-size: .875rem;
+		}
+
+		.d-flex {
+			display: -ms-flexbox !important;
+			display: flex !important
+		}
+
+		.justify-content-between {
+			-ms-flex-pack: justify !important;
+			justify-content: space-between !important
+		}
+
+		.py-1 {
+			padding-top: .25rem !important
+		}
+
+		.p-2 {
+			padding: .5rem !important
+		}
+
+		.text-muted {
+			color: #6c757d !important;
+			font-size: medium;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+			<div class="page-header text-center">
+					<h1> Profile Page</h1>
+					<a style="float: right; margin-top: 30px;" href="/logout" class="btn btn-default btn-sm">Logout</a>
+				</div>
+				
+				<div class="nav-scroller py-1">
+						<nav class="nav d-flex justify-content-between">
+							<a class="p-2 text-muted" href="/profile">My Profile</a>
+							<a class="p-2 text-muted" href="">My Stocks</a>
+							<a class="p-2 text-muted" href="/search">Search Stocks</a>
+							<a class="p-2 text-muted" href="/buy">Buy Stocks</a>
+							<a class="p-2 text-muted" href="/sell">Sell Stocks</a>
+						</nav>
+					</div>
+					
+				<br>
+	
+		<form action='/update_schedule' method="post">
+        <table id="table" class="table-editable" data-toggle="table" data-filter-control="true" data-show-search-clear-button="true">
+        <thead> 
+        <tr>
+          <th data-filter-control="input" data-sortable="true">Stock</th>
+          <th data-filter-control="input" data-sortable="true">Company</th>
+          <th data-filter-control="input" data-sortable="true">Price</th>
+          <th data-filter-control="input" data-sortable="true">Number_Stocks</th>
+          <th data-filter-control="input" data-sortable="true">Recurring_buy</th>
+          <th data-filter-control="input" data-sortable="true">Recurring_sell</th>
+          <th data-filter-control="input" data-sortable="true">No_stocks_sell</th>
+          <th data-filter-control="input" data-sortable="true">No_stocks_buy</th>
+
+        </tr>
+        </thead>
+      <tbody>
+        <% for(var i=0; i < stocklist.Stock.length; i++) { %>
+       <tr>
+         
+         <td><%= stocklist.Stock[i] %></td>
+         <td><%= stocklist.Company[i] %></td>
+         <td><%= stocklist.Price[i] %></td>
+         <td><%= stocklist.Number_Stocks[i] %></td>
+         <td contenteditable="true" name=<%= stocklist.Stock[i] %>.concat("Recurring_buy")><%= stocklist.Recurring_buy[i] %></td>
+         <td contenteditable='true' name=<%= stocklist.Stock[i] %>.concat("Recurring_sell") ><%= stocklist.Recurring_sell[i] %></td>
+         <td contenteditable='true' name=<%= stocklist.Stock[i] %>.concat("No_stocks_buy")><%= stocklist.No_stocks_buy[i] %></td>
+		 <td contenteditable='true' name=<%= stocklist.Stock[i] %>.concat("No_stocks_sell")><%= stocklist.No_stocks_sell[i] %></td>
+		 <td contenteditable="true" style="display:none;"></td>
+
+
+
+       </tr>
+    <% } %>
+      </tbody>
+
+	</table>
+	<input type="submit" />
+	</form>
+				
+
+    </div>
+    
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.js"></script>
+	
+	<script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.15.4/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>	
+</body>
+
+</html>

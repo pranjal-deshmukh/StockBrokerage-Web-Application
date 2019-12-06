@@ -3,8 +3,9 @@ module.exports = {
     'connection': {
         'host': 'localhost',
         'user': 'root',
-        'password': 'Longview1102'//'sk99'
-    },
+        'password': 'sk99', //'Longview1102',
+        multipleStatements: true 
+            },
     'database': 'brokerage',
     'users_table': 'users',
     'stocks_table': 'stocks'

@@ -3,13 +3,62 @@
 <html>
 
 <head>
-    <title>Node Authentication</title>
+    <title>Stock Brokerage</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <style>
         body {
             padding-top: 30px;
             word-wrap: break-word;
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: nowrap;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-scroller .nav-link {
+            padding-top: .75rem;
+            padding-bottom: .75rem;
+            font-size: .875rem;
+        }
+
+        .d-flex {
+            display: -ms-flexbox !important;
+            display: flex !important
+        }
+
+        .justify-content-between {
+            -ms-flex-pack: justify !important;
+            justify-content: space-between !important
+        }
+
+        .py-1 {
+            padding-top: .25rem !important
+        }
+
+        .p-2 {
+            padding: .5rem !important
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+            font-size: medium;
         }
     </style>
 </head>
@@ -19,8 +68,19 @@
 
         <div class="page-header text-center">
             <h1>Stock Price</h1>
-            <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+            <a style="float: right; margin-top: 30px;" href="/logout" class="btn btn-default btn-sm">Logout</a>
         </div>
+
+        <div class="nav-scroller py-1">
+            <nav class="nav d-flex justify-content-between">
+                <a class="p-2 text-muted" href="/profile">My Profile</a>
+                <a class="p-2 text-muted" href="/get_my_stocks">My Stocks</a>
+                <a class="p-2 text-muted" href="/search">Search Stocks</a>
+                <a class="p-2 text-muted" href="/buy">Buy Stocks</a>
+                <a class="p-2 text-muted" href="/sell">Sell Stocks</a>
+            </nav>
+        </div>
+        <br>
 
         <div class="row" style="margin: auto; text-align: center;">
 
@@ -37,6 +97,7 @@
 
                     <% } %>
                     <a href="/search" class="btn btn-default btm-sm">Search Stocks</a>
+                    <a href="/buy" class="btn btn-default btm-sm">Buy Stocks</a>
                 </div>
             </div>
             <h3>Current Price: $<%= utils.curr %></h3>

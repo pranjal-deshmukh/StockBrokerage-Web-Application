@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Stock Brokerage</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+   	<style>
+		body {
+			padding-top: 30px;
+			word-wrap: break-word;
+		}
+
+		.nav-scroller {
+			position: relative;
+			z-index: 2;
+			height: 2.75rem;
+			overflow-y: hidden;
+		}
+
+		.nav-scroller .nav {
+			display: -ms-flexbox;
+			display: flex;
+			-ms-flex-wrap: nowrap;
+			flex-wrap: nowrap;
+			padding-bottom: 1rem;
+			margin-top: -1px;
+			overflow-x: auto;
+			text-align: center;
+			white-space: nowrap;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.nav-scroller .nav-link {
+			padding-top: .75rem;
+			padding-bottom: .75rem;
+			font-size: .875rem;
+		}
+
+		.d-flex {
+			display: -ms-flexbox !important;
+			display: flex !important
+		}
+
+		.justify-content-between {
+			-ms-flex-pack: justify !important;
+			justify-content: space-between !important
+		}
+
+		.py-1 {
+			padding-top: .25rem !important
+		}
+
+		.p-2 {
+			padding: .5rem !important
+		}
+
+		.text-muted {
+			color: #6c757d !important;
+			font-size: medium;
+		}
+    </style>
+    
+    <script type="text/javascript">
+        function GetSelected() {
+            //Reference the Table.
+            var grid = document.getElementById("table");
+     
+            //Reference the CheckBoxes in Table.
+            var checkBoxes = grid.getElementsByTagName("INPUT");
+            var stocks=[];
+            var prices=[];
+            var no_stocks=[];
+            var no_stocks_to_sell=[];
+            //Loop through the CheckBoxes.
+            for (var i = 0; i < checkBoxes.length; i++) {
+                if (checkBoxes[i].checked) {
+                    var row = checkBoxes[i].parentNode.parentNode;
+                    stocks.push(row.cells[1].innerHTML);
+                    prices.push(row.cells[3].innerHTML);
+                    no_stocks.push(row.cells[4].innerHTML);
+                    no_stocks_to_sell.push(row.cells[5].innerHTML);
+                    
+                }
+            }
+            var message = {stocks:stocks,prices:prices,no_stocks:no_stocks,no_stocks_to_sell:no_stocks_to_sell};
+            var m=JSON.stringify(message);
+            console.log('in sell.ejs' + m);
+            document.getElementById('sell_button').href=`/sell_stocks:${m}`					 
+            window.alert('Sell request submitted');
+        }
+    </script>
+    
+</head>
+
+<body>
+	<div class="container">
+			<div class="page-header text-center">
+					<h1> Profile Page</h1>
+					<a style="float: right; margin-top: 30px;" href="/logout" class="btn btn-default btn-sm">Logout</a>
+				</div>
+				
+				<div class="nav-scroller py-1">
+                        <nav class="nav d-flex justify-content-between">
+                                <a class="p-2 text-muted" href="/profile">My Profile</a>
+                                <a class="p-2 text-muted" href="/get_my_stocks">My Stocks</a>
+                                <a class="p-2 text-muted" href="/search">Search Stocks</a>
+                                <a class="p-2 text-muted" href="/buy">Buy Stocks</a>
+                                <a class="p-2 text-muted" href="/sell">Sell Stocks</a>
+                            </nav>
+				</div>
+				<br>
+        <div>
+       <a id="sell_button" style="float: right; margin-top: 30px; margin-bottom: 30px;" href="" onclick="GetSelected()" class="btn btn-default btn-sm">SELL Selected Stocks</a>
+        
+        </div>
+        
+        <br>
+    
+    
+    <table  id="table" class="table table-inverse" data-toggle="table" data-filter-control="true" data-show-search-clear-button="true">
+            <thead> 
+            <tr>
+             
+              <th>&nbsp;</th>
+              <th  data-sortable="true">Stock</th>
+              <th  data-sortable="true">Company</th>
+              <th  data-sortable="true">Price</th>
+              <th  data-sortable="true">Number of Stocks</th>
+              <th  data-sortable="true">Stocks to sell</th>
+            
+            </tr>
+            </thead>
+          <tbody>
+            <% for(var i=0; i < stocklist.Stock.length; i++) { %>
+           <tr>
+              <td><input type="checkbox"/></td>
+             <td><%= stocklist.Stock[i] %></td>
+             <td><%= stocklist.Company[i] %></td>
+             <td><%= stocklist.Price[i] %></td>
+             <td><%= stocklist.Number_Stocks[i] %></td>
+             <td contenteditable="true"></td>
+            
+    
+    
+           </tr>
+        <% } %>
+          </tbody>
+    
+        </table>
+				
+
+    </div>
+    
+
+   </body>
+
+</html>

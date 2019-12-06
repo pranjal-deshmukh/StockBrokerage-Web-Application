@@ -1,20 +1,219 @@
+// load up the user model
+var mysql = require('mysql');
+
+var User = require('./models/user');
+var bcrypt = require('bcrypt-nodejs');
+
+var dbconfig = require('../config/database');
+var nodemailer = require('nodemailer');
+var connection = mysql.createConnection(dbconfig.connection);
+
+connection.query('USE ' + dbconfig.database);
+
+class Queue {
+	// Array is used to implement a Queue 
+	constructor() {
+		this.items = [];
+	}
+
+	// Functions to be implemented 
+	// enqueue(item) 
+	enqueue(element) {
+		// adding element to the queue 
+		this.items.push(element);
+	}
+	// dequeue() 
+	dequeue() {
+		// removing element from the queue 
+		// returns underflow when called  
+		// on empty queue 
+		if (this.isEmpty())
+			return "Underflow";
+		return this.items.shift();
+	}
+	// front() 
+	front() {
+		// returns the Front element of  
+		// the queue without removing it. 
+		if (this.isEmpty())
+			return "No elements in Queue";
+		return this.items[0];
+	}
+	// isEmpty()
+	isEmpty() {
+		// return true if the queue is empty. 
+		return this.items.length == 0;
+	}
+	// printQueue() 
+	printQueue() {
+		var str = "";
+		for (var i = 0; i < this.items.length; i++)
+			str += this.items[i] + " ";
+		return str;
+	}
+}
+
+var buy_queue = new Queue();
+var sell_queue = new Queue();
+
+function submitBuy() {
+		let item = buy_queue.dequeue();
+		if (item !== 'Underflow') {
+			//item in queue, get it and process
+			console.log('buy queue data', item);
+
+			//check balance
+			var total_price=0;
+			for(var i=0;i<item.stocks.length;i++){
+				total_price=total_price+(parseInt(item.prices[i])*parseInt(item.no_stocks[i])) ;
+			} 
+			console.log('Total transaction price', total_price);
+			if(item.balance-total_price>0){
+
+			for(var i=0;i<item.stocks.length;i++){
+				connection.query("INSERT INTO " + `current_stocks`  +
+				" (`userid`,`stockid`,`num_stocks`)values ('" + item.idUser + "'," + "(select `idStocks` from  stocks where `Stock_Name`='"+item.stocks[i]+"'  order by `Timestamp` desc limit 1)" +
+			",'"+item.no_stocks[i]+"')",
+				function (error, results, fields) {
+					if (error) throw error;
+				});
+
+			}
+			connection.query("update users set `balance`=`balance`-" +(total_price)+" where `idUser`='" +item.idUser+"'",
+			function (error, results, fields) {
+				if (error) throw error;
+			});
+			
+			/*connection.query("INSERT INTO " + `current_stocks`  +
+			" values ('" + obj.userid + "','" + "(select `idStocks` from  stocks where `Stock_Name`='"+obj.stock_name+"'  order by `Timestamp` desc limit 1),'" +  
+			 obj.num_stocks + "','" +obj.num_recur_days_sell + "','" +  
+			 obj.num_recur_days_buy + "','" +obj.num_stocks_sell + "','"+obj.num_stocks_buy+"')",
+			function (error, results, fields) {
+				if (error) throw error;
+			});*/
+
+			console.log('Buy Transaction complete.');
+		}
+		else{
+			console.log('Buy Transaction failed. Insufficient balance');
+		
+		}
+		}
+}
+
+function submitSell() {
+	let item = sell_queue.dequeue();
+	if (item !== 'Underflow') {
+		//item in queue, get it and process
+		console.log('sell queue data', item);
+	
+		//check balance
+		var total_price=0;
+		for(var i=0;i<item.stocks.length;i++){
+			total_price=total_price+(parseInt(item.prices[i])*parseInt(item.no_stocks_to_sell[i])) ;
+		} 
+		console.log('Total transaction price', total_price);
+		if(true){
+
+
+		for(var i=0;i<item.stocks.length;i++){
+			connection.query("update current_stocks set `num_stocks`=`num_stocks` -" +item.no_stocks_to_sell[i]+" where `userid`='" +item.idUser+"'",
+			function (error, results, fields) {
+				if (error) throw error;
+			});
+
+		}
+		connection.query("update users set `balance`=`balance`+" +(total_price)+" where `idUser`='" +item.idUser+"'",
+		function (error, results, fields) {
+			if (error) throw error;
+		});
+		
+		/*connection.query("INSERT INTO " + `current_stocks`  +
+		" values ('" + obj.userid + "','" + "(select `idStocks` from  stocks where `Stock_Name`='"+obj.stock_name+"'  order by `Timestamp` desc limit 1),'" +  
+		 obj.num_stocks + "','" +obj.num_recur_days_sell + "','" +  
+		 obj.num_recur_days_buy + "','" +obj.num_stocks_sell + "','"+obj.num_stocks_buy+"')",
+		function (error, results, fields) {
+			if (error) throw error;
+		});*/
+
+		console.log('Sell Transaction complete.');
+	}
+	else{
+		console.log('Sell Transaction failed.');
+	
+	}
+	}
+}
+
+
 module.exports = function (app, passport) {
+	var async = require('async');
 	var axios = require('axios');
 	var moment = require('moment');
-	var queries = require('./queries');
+	var crypto = require('crypto');
+
+	//var queries = require('./queries');
 
 	// normal routes ===============================================================
 
 
+	//add bank accounts
+
 	app.post('/add_bank_account', isLoggedIn, (req, res) => {
-		queries.add_bank_account(req.user.idUser, req.body.bank_acc_no, req.body.routing),
+		connection.query("Insert into bank(`userid`,`account_no`,`routing_no`) values('" + req.user.idUser + "','" + req.body.bank_acc_no + "','" + req.body.routing + "')",
 			function (error, results, fields) {
 				if (error) throw error;
 
-				console.log('Account add successful');
+				console.log('Inserting bank details');
+
 				res.redirect('/profile');
 
-			}
+			});
+	});
+
+	//update profile
+	app.post('/update_profile', isLoggedIn, (req, res) => {
+		connection.query("update users set `address`='" + req.body.address + "',`email`='" + req.body.email + "',`security_ans`='" + req.body.vacation + "' where `idUser`='" + req.user.idUser + "'",
+			function (error, results, fields) {
+				if (error) throw error;
+
+				console.log('Updating profile');
+
+				res.redirect('/profile');
+
+			});
+	});
+
+	//Credit/Debit
+	app.post('/add_money', isLoggedIn, (req, res) => {
+		var x = "op";
+		x = req.body.transfer;
+		if (x == "Debit") {
+			req.body.balance = -1 * req.body.balance;
+		}
+
+		connection.query("update users set `balance`=`balance`+'" + req.body.balance + "' where `idUser`='" + req.user.idUser + "'",
+			function (error, results, fields) {
+				if (error) throw error;
+
+				console.log('Updating balance');
+
+				res.redirect('/profile');
+
+			});
+	});
+
+	//Update schedule-not working
+	app.post('/update_schedule', isLoggedIn, (req, res) => {
+		connection.query("update users set `balance`=`balance`+''" + req.body.balance + "where `idUser=''" + req.user.idUser,
+			function (error, results, fields) {
+				if (error) throw error;
+
+				console.log('Updating balance');
+
+				res.redirect('/profile');
+
+			});
 	});
 
 	// show the home page (will also have our login links)
@@ -22,20 +221,283 @@ module.exports = function (app, passport) {
 		res.render('index.ejs');
 	});
 
+
+	app.post('/forgot', function(req, res, next) {
+		//vacation_place
+
+		connection.query("select security_ans from users"+ " where `username`='" + req.body.userid + "'",
+		function (error, results, fields) {
+			if (error) throw error;
+
+			console.log(req.body.vacation_place);
+	
+			//var x='';
+			//x=results.security_ans;
+			
+			//if(results.security_ans===req.body.vacation_place){
+				if(true){
+				res.redirect('/resetPassword');
+
+			}
+			else{
+				res.redirect('/forgot');
+				}
+		
+		});
+
+		
+  });
+
+
+	app.get('/forgot', function(req, res) {
+		res.render('forgot.ejs', {
+		  user: req.user
+		});
+	  });
+
+	
+	  app.get('/resetPassword', function(req, res) {
+		res.render('resetPassword', {
+		  user: req.user
+		});
+	  });
+	
+	  app.post('/resetPassword', isLoggedIn, (req, res) => {
+		
+		password=req.body.password;
+		password = bcrypt.hashSync(password, null, null);
+		
+		
+		connection.query("update users set `password`='" +password+ "' where `idUser`='" +req.user.idUser+"'",
+		
+		function (error, results, fields) {
+			if (error) throw error;
+			
+			console.log('Password Reset Successful');
+	
+			res.redirect('/login');
+			
+		});
+	});
 	// PROFILE SECTION =========================
-	app.get('/profile', isLoggedIn, function (req, res) {
-		res.render('profile.ejs', {
-			user: req.user
+
+	app.get('/get_my_stocks', isLoggedIn, function (req, res) {
+		return_data = {}
+		const id = req.user.idUser;
+		query1 = "select * from current_stocks c, stocks s where `idStocks`=`stockid` and `userid`=" + id;
+		connection.query(query1, {}, function (err, results) {
+
+			console.log(query1);
+			//console.log(results);
+			stocklist = {}
+			if (results.length > 0) {
+				console.log(results[1]);
+				stocklist = {};
+				let Stock_Name = [];
+				let Company = [];
+				let Price = [];
+				let num_stocks = [];
+				let num_recur_days_buy = [];
+				let num_recur_days_sell = [];
+				let num_stocks_sell = [];
+				let num_stocks_buy = [];
+
+				for (let i = 0; i < results.length; i++) {
+					Company.push(results[i].Company);
+					Stock_Name.push(results[i].Stock_Name);
+					Price.push(results[i].Price);
+					num_stocks.push(results[i].num_stocks);
+					num_recur_days_buy.push(results[i].num_recur_days_buy);
+					num_recur_days_sell.push(results[i].num_recur_days_sell);
+					num_stocks_sell.push(results[i].num_stocks_sell);
+					num_stocks_buy.push(results[i].num_stocks_buy);
+
+
+				}
+				console.log(Company);
+				stocklist = {
+					userid: results[0].userid,
+					Stock: Stock_Name,
+					Company: Company,
+					Price: Price,
+					Number_Stocks: num_stocks,
+					Recurring_buy: num_recur_days_buy,
+					Recurring_sell: num_recur_days_sell,
+					No_stocks_sell: num_stocks_sell,
+					No_stocks_buy: num_stocks_buy
+				};
+				return_data.stocklist = stocklist;
+				console.log(return_data)
+				res.render('mystocks.ejs', return_data);
+
+			}
+			else {
+
+				return_data.stocklist = stocklist;
+				console.log(return_data)
+				res.render('mystocks.ejs', return_data);
+
+			}
+			//console.log(return_data);
+
 		});
 	});
 
+
+	app.get('/sell', isLoggedIn, function (req, res) {
+		return_data = {}
+		const id = req.user.idUser;
+		
+		query1 = "select * from current_stocks c, stocks s where `idStocks`=`stockid` and `userid`=" + id;
+		connection.query(query1, {}, function (err, results) {
+
+			console.log(query1);
+			//console.log(results);
+			stocklist = {}
+			if (results.length > 0) {
+				console.log(results[1]);
+				stocklist = {};
+				let Stock_Name = [];
+				let Company = [];
+				let Price = [];
+				let num_stocks = [];
+				
+				for (let i = 0; i < results.length; i++) {
+					Company.push(results[i].Company);
+					Stock_Name.push(results[i].Stock_Name);
+					Price.push(results[i].Price);
+					num_stocks.push(results[i].num_stocks);
+					
+
+				}
+				console.log(Company);
+				stocklist = {
+					userid: results[0].userid,
+					Stock: Stock_Name,
+					Company: Company,
+					Price: Price,
+					Number_Stocks: num_stocks,
+				};
+				return_data.stocklist = stocklist;
+				console.log(return_data)
+				res.render('sell.ejs', return_data);
+
+			}
+	
+			//console.log(return_data);
+
+		});
+	});
+
+
+
+	//profile page
+	app.get('/profile', isLoggedIn, function (req, res) {
+		return_data = {}
+		const id = req.user.idUser;
+		query1 = "select username, address, email, balance from users where `idUser`=" + id;
+		query2 = "select account_no from bank where `userid`=" + id;
+		connection.query(query1, {}, function (err, results) {
+			profile = {
+				username: results[0].username,
+				address: results[0].address,
+				email: results[0].email,
+				balance: results[0].balance
+			};
+			if (!profile.email) profile.email = '';
+			if (!profile.address) profile.address = '';
+			return_data.user = profile;
+			//console.log(return_data);
+
+			connection.query(query2, {}, function (err, results) {
+				var accounts = [];
+				console.log(results);
+				for (let i = results.length - 1; i >= 0; i--) {
+					accounts.push(results[i].account_no);
+				}
+				bank = {
+					account_nos: accounts
+				};
+				return_data.banks = bank;
+				console.log(return_data);
+				res.render('profile.ejs', return_data);
+
+
+			});
+		});
+	});
+
+
+
 	// STOCK SEARCH =========================
-	app.get('/search', isLoggedIn, function (req, res) {
+	app.get('/search', function (req, res) {
 		res.render('search.ejs');
 	});
 
+	//get selected stocks for buying
+	app.get('/buy_stocks:data', isLoggedIn, function (req, res) {
+		var data = JSON.parse(req.params.data.substring(1, req.params.data.length));
+		// console.log('in routes.js ' + data.substring(1, data.length));
+		Object.assign(data, req.user);
+		//sleep before adding to queue
+		sleep(5000).then(() => {
+		    //send data to queue
+			buy_queue.enqueue(data);
+		  })
+		res.redirect('/buy');
+	});
+
+	app.get('/sell_stocks:data', isLoggedIn, function (req, res) {
+		var data = JSON.parse(req.params.data.substring(1, req.params.data.length));
+		// console.log('in routes.js ' + data.substring(1, data.length));
+		Object.assign(data, req.user);
+		//sleep before adding to queue
+		sleep(5000).then(() => {
+		    //send data to queue
+			sell_queue.enqueue(data);
+		  })
+		res.redirect('/sell');
+	});
+
+
+	// SHOW current prices for all stocks
+	app.get('/buy', isLoggedIn, function (req, res) {
+		//get price info from exchange app.
+		function getStocksCurrent() {
+			console.log('Stock Exchange Service Authenticated');
+			const url = 'http://localhost:8081/api/getStocksCurrent'
+			return axios({
+				method: 'post',
+				url: url
+			});
+		}
+		axios.all([getStocksCurrent()]).then((result) => {
+			// console.log('all_stocks:', result[0].data.list[0]);
+
+
+			let stock = [];
+			let company = [];
+			let price = [];
+
+			for (let i = result[0].data.list.length - 1; i >= 0; i--) {
+				price.push(result[0].data.list[i].price.toFixed(2));
+				company.push(result[0].data.list[i].company);
+				stock.push(result[0].data.list[i].Stock_Name);
+
+			}
+
+			res.render('buy.ejs', {
+				curr_stocks: { stock: stock, company: company, price: price }
+			});
+		}).catch(err => console.log(err));
+
+
+	});
+
+
+
 	// SHOW STOCK PRICES
-	app.get('/show/:stock/:time', isLoggedIn, function (req, res) {
+	app.get('/show/:stock/:time', function (req, res) {
 		var stock = req.params.stock;
 		var time = req.params.time;
 
@@ -72,6 +534,7 @@ module.exports = function (app, passport) {
 			});
 		}
 		function getPriceHistory() {
+			console.log('Stock Exchange Service Authenticated');
 			const url = 'http://localhost:8081/api/getStockHistory';
 			const data = {
 				symbol: stock,
@@ -185,7 +648,6 @@ module.exports = function (app, passport) {
 		res.redirect('/invalid')
 	});
 
-
 };
 
 // route middleware to ensure user is logged in
@@ -195,3 +657,10 @@ function isLoggedIn(req, res, next) {
 
 	res.redirect('/');
 }
+
+const sleep = (milliseconds) => {
+	return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+setInterval(submitBuy, 500);
+setInterval(submitSell, 500);

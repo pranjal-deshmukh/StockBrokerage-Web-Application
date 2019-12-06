@@ -7,13 +7,20 @@ var app      = express();
 var port     = process.env.PORT || 8080;
 var passport = require('passport');
 var flash    = require('connect-flash');
-
+var fs = require('fs');
+var https = require('https');
 var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
 var configDB = require('./config/database.js');
+
+var httpOptions = {
+    passphrase: "password",
+    key: fs.readFileSync('./key.pem'),
+    cert: fs.readFileSync('./cert.pem')
+};
 
 
 require('./config/passport')(passport); // pass passport for configuration
@@ -38,5 +45,5 @@ app.use(function(err, req, res, next) {
 require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
-app.listen(port);
+https.createServer(httpOptions, app).listen(port);
 console.log('The magic happens on port ' + port);
