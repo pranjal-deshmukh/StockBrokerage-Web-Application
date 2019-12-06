@@ -13,7 +13,8 @@
 
 	<script type="text/javascript">
     function GetSelected() {
-		if ((date.day() == 0) || (date.day() == 6) || (date.hour() < 8) || (date.hour() > 16)) {
+		var date = new Date();
+		if ((date.getDay() == 0) || (date.getDay() == 6) || (date.getHours() < 8) || (date.getHours() > 16)) {
 			window.alert('Transactions cannot be made outside the business hours of 8am - 5pm CST');
 		} else {
 			//Reference the Table.
