@@ -2,13 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
-
+var moment = require('moment');
 const mysql = require('mysql');
 
 const connection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    password : 'sk99',
+    password : 'Longview1102',//'sk99',
     database : 'brokerage',
     multipleStatements : true
 });
@@ -27,34 +27,39 @@ function priceChange(price) {
 }
 
 function updatePrices() {
-    const sql = 'Select s.Stock_Name, s.Price, s.`Timestamp`, s.Company ' +
-                'From stocks s ' +
-                'Join (Select st.Stock_Name, max(st.`Timestamp`) as `timestamp` '+
-                'From stocks st '+
-                'group by Stock_Name) tb on s.Stock_Name = tb.Stock_Name and s.`Timestamp` = tb.`timestamp` '+
-                'group by Stock_Name, s.Price, s.`Timestamp`, s.Company';
-    connection.query(sql,
-        function (error, results, fields) {
-            if (error) throw error;
-            console.log('Current latest prices result: ', results);
-            console.log('length: ', results.length);
-            for (let i = 0; i < results.length; i++) {
-                //update price of each stock
-                let price = priceChange(results[i].Price);
-                results[i].Price = price;
-            }
-            console.log('Stocks after change: ', results);
-            console.log('after length: ', results.length);
-            //send update to db
-            let update = '';
-            for (let j = 0; j < results.length; j++) {
-                update = update + `insert into stocks(Stock_Name, Price, Company) values ("${results[j].Stock_Name}", ${results[j].Price}, "${results[j].Company}"); `;
-            }
-            // console.log(update);
-            connection.query(update, null);
-            console.log('\ndb updated with new stock prices and timestamps');
-            return results;
-    });
+    var date = moment();
+    if ((date.day() == 0) || (date.day() == 6) || (date.hour() < 8) || (date.hour() > 16)) {
+        console.log('Currently outside of business window. No price updates.');
+    } else {
+        const sql = 'Select s.Stock_Name, s.Price, s.`Timestamp`, s.Company ' +
+                    'From stocks s ' +
+                    'Join (Select st.Stock_Name, max(st.`Timestamp`) as `timestamp` '+
+                    'From stocks st '+
+                    'group by Stock_Name) tb on s.Stock_Name = tb.Stock_Name and s.`Timestamp` = tb.`timestamp` '+
+                    'group by Stock_Name, s.Price, s.`Timestamp`, s.Company';
+        connection.query(sql,
+            function (error, results, fields) {
+                if (error) throw error;
+                console.log('Current latest prices result: ', results);
+                console.log('length: ', results.length);
+                for (let i = 0; i < results.length; i++) {
+                    //update price of each stock
+                    let price = priceChange(results[i].Price);
+                    results[i].Price = price;
+                }
+                console.log('Stocks after change: ', results);
+                console.log('after length: ', results.length);
+                //send update to db
+                let update = '';
+                for (let j = 0; j < results.length; j++) {
+                    update = update + `insert into stocks(Stock_Name, Price, Company) values ("${results[j].Stock_Name}", ${results[j].Price}, "${results[j].Company}"); `;
+                }
+                // console.log(update);
+                connection.query(update, null);
+                console.log('\ndb updated with new stock prices and timestamps');
+                return results;
+        });
+    }
 }
 setInterval(updatePrices, 120000); //update every 2 minutes
 
