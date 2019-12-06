@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Stock Brokerage</title>
+	<title>Node Authentication</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -85,13 +85,13 @@ no
 		</div>
 		
 		<div class="nav-scroller py-1">
-			<nav class="nav d-flex justify-content-between">
-				<a class="p-2 text-muted" href="/profile">My Profile</a>
-				<a class="p-2 text-muted" href="/get_my_stocks">My Stocks</a>
-				<a class="p-2 text-muted" href="/search">Search Stocks</a>
-				<a class="p-2 text-muted" href="/buy">Buy Stocks</a>
-				<a class="p-2 text-muted" href="/sell">Sell Stocks</a>
-			</nav>
+				<nav class="nav d-flex justify-content-between">
+						<a class="p-2 text-muted" href="/profile">My Profile</a>
+						<a class="p-2 text-muted" href="/get_my_stocks">My Stocks</a>
+						<a class="p-2 text-muted" href="/search">Search Stocks</a>
+						<a class="p-2 text-muted" href="/buy">Buy Stocks</a>
+						<a class="p-2 text-muted" href="/sell">Sell Stocks</a>
+					</nav>
 		</div>
 		<br>
 		<h2>Profile</h2>
@@ -136,6 +136,10 @@ no
 							<label>Address</label>
 							<input type="text" class="form-control" name="address" value=<%= user.address %>>
 						</div>
+						<div class="form-group">
+								<label>Security Question: What is your favourite vacation spot?</label>
+								<input type="text" class="form-control" name="vacation" value=<%= user.security_ans %>>
+							</div>
 					
 		
 						<button type="submit" class="btn btn-warning btn-lg">Update</button>
