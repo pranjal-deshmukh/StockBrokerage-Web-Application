@@ -62,17 +62,89 @@ function submitBuy() {
 			//item in queue, get it and process
 			console.log('buy queue data', item);
 
-			connection.query("INSERT INTO " + `current_stocks`  +
+			//check balance
+			var total_price=0;
+			for(var i=0;i<item.stocks.length;i++){
+				total_price=total_price+(parseInt(item.prices[i])*parseInt(item.no_stocks[i])) ;
+			} 
+			console.log('Total transaction price', total_price);
+			if(item.balance-total_price>0){
+
+			for(var i=0;i<item.stocks.length;i++){
+				connection.query("INSERT INTO " + `current_stocks`  +
+				" (`userid`,`stockid`,`num_stocks`)values ('" + item.idUser + "'," + "(select `idStocks` from  stocks where `Stock_Name`='"+item.stocks[i]+"'  order by `Timestamp` desc limit 1)" +
+			",'"+item.no_stocks[i]+"')",
+				function (error, results, fields) {
+					if (error) throw error;
+				});
+
+			}
+			connection.query("update users set `balance`=`balance`-" +(total_price)+" where `idUser`='" +item.idUser+"'",
+			function (error, results, fields) {
+				if (error) throw error;
+			});
+			
+			/*connection.query("INSERT INTO " + `current_stocks`  +
 			" values ('" + obj.userid + "','" + "(select `idStocks` from  stocks where `Stock_Name`='"+obj.stock_name+"'  order by `Timestamp` desc limit 1),'" +  
 			 obj.num_stocks + "','" +obj.num_recur_days_sell + "','" +  
 			 obj.num_recur_days_buy + "','" +obj.num_stocks_sell + "','"+obj.num_stocks_buy+"')",
 			function (error, results, fields) {
 				if (error) throw error;
-			});
+			});*/
 
 			console.log('Buy Transaction complete.');
 		}
+		else{
+			console.log('Buy Transaction failed. Insufficient balance');
+		
+		}
+		}
 }
+
+function submitSell() {
+	let item = sell_queue.dequeue();
+	if (item !== 'Underflow') {
+		//item in queue, get it and process
+		console.log('sell queue data', item);
+	
+		//check balance
+		var total_price=0;
+		for(var i=0;i<item.stocks.length;i++){
+			total_price=total_price+(parseInt(item.prices[i])*parseInt(item.no_stocks_to_sell[i])) ;
+		} 
+		console.log('Total transaction price', total_price);
+		if(true){
+
+
+		for(var i=0;i<item.stocks.length;i++){
+			connection.query("update current_stocks set `num_stocks`=`num_stocks` -" +item.no_stocks_to_sell[i]+" where `userid`='" +item.idUser+"'",
+			function (error, results, fields) {
+				if (error) throw error;
+			});
+
+		}
+		connection.query("update users set `balance`=`balance`+" +(total_price)+" where `idUser`='" +item.idUser+"'",
+		function (error, results, fields) {
+			if (error) throw error;
+		});
+		
+		/*connection.query("INSERT INTO " + `current_stocks`  +
+		" values ('" + obj.userid + "','" + "(select `idStocks` from  stocks where `Stock_Name`='"+obj.stock_name+"'  order by `Timestamp` desc limit 1),'" +  
+		 obj.num_stocks + "','" +obj.num_recur_days_sell + "','" +  
+		 obj.num_recur_days_buy + "','" +obj.num_stocks_sell + "','"+obj.num_stocks_buy+"')",
+		function (error, results, fields) {
+			if (error) throw error;
+		});*/
+
+		console.log('Sell Transaction complete.');
+	}
+	else{
+		console.log('Sell Transaction failed.');
+	
+	}
+	}
+}
+
 
 module.exports = function (app, passport) {
 	var async = require('async');
@@ -215,6 +287,52 @@ module.exports = function (app, passport) {
 	});
 
 
+	app.get('/sell', isLoggedIn, function (req, res) {
+		return_data = {}
+		const id = req.user.idUser;
+		query1 = "select * from current_stocks c, stocks s where `idStocks`=`stockid` and `userid`=" + id;
+		connection.query(query1, {}, function (err, results) {
+
+			console.log(query1);
+			//console.log(results);
+			stocklist = {}
+			if (results.length > 0) {
+				console.log(results[1]);
+				stocklist = {};
+				let Stock_Name = [];
+				let Company = [];
+				let Price = [];
+				let num_stocks = [];
+				
+				for (let i = 0; i < results.length; i++) {
+					Company.push(results[i].Company);
+					Stock_Name.push(results[i].Stock_Name);
+					Price.push(results[i].Price);
+					num_stocks.push(results[i].num_stocks);
+					
+
+				}
+				console.log(Company);
+				stocklist = {
+					userid: results[0].userid,
+					Stock: Stock_Name,
+					Company: Company,
+					Price: Price,
+					Number_Stocks: num_stocks,
+				};
+				return_data.stocklist = stocklist;
+				console.log(return_data)
+				res.render('sell.ejs', return_data);
+
+			}
+	
+			//console.log(return_data);
+
+		});
+	});
+
+
+
 	//profile page
 	app.get('/profile', isLoggedIn, function (req, res) {
 		return_data = {}
@@ -269,6 +387,18 @@ module.exports = function (app, passport) {
 			buy_queue.enqueue(data);
 		  })
 		res.redirect('/buy');
+	});
+
+	app.get('/sell_stocks:data', isLoggedIn, function (req, res) {
+		var data = JSON.parse(req.params.data.substring(1, req.params.data.length));
+		// console.log('in routes.js ' + data.substring(1, data.length));
+		Object.assign(data, req.user);
+		//sleep before adding to queue
+		sleep(5000).then(() => {
+		    //send data to queue
+			sell_queue.enqueue(data);
+		  })
+		res.redirect('/sell');
 	});
 
 
@@ -473,3 +603,4 @@ const sleep = (milliseconds) => {
 }
 
 setInterval(submitBuy, 500);
+setInterval(submitSell, 500);
