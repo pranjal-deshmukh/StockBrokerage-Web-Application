@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Node Authentication</title>
+	<title>Stock Brokerage</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,6 +21,7 @@
 		var stocks=[];
 		var company=[];
 		var prices=[];
+		var no_stocks=[];
         //Loop through the CheckBoxes.
         for (var i = 0; i < checkBoxes.length; i++) {
             if (checkBoxes[i].checked) {
@@ -28,9 +29,10 @@
 				stocks.push(row.cells[1].innerHTML);
 				company.push(row.cells[2].innerHTML);
 				prices.push(row.cells[3].innerHTML);
+				no_stocks.push(row.cells[4].innerHTML);
             }
 		}
-		var message = {stocks:stocks,company:company,prices:prices};
+		var message = {stocks:stocks,company:company,prices:prices,no_stocks:no_stocks};
 		var m=JSON.stringify(message);
 		console.log('in buy.ejs' + m);
 		document.getElementById('buy_button').href=`/buy_stocks:${m}`					 
@@ -124,6 +126,7 @@
 						  <th  data-sortable="true">Stock</th>
 						  <th  data-sortable="true">Company</th>
 						  <th  data-sortable="true">Price</th>
+						  <th  data-sortable="true">Number of Stocks</th>
 						
 						</tr>
 						</thead>
@@ -134,6 +137,7 @@
 						 <td><%= curr_stocks.stock[i] %></td>
 						 <td><%= curr_stocks.company[i] %></td>
 						 <td><%= curr_stocks.price[i] %></td>
+						 <td contenteditable="true"></td>
 						
 				
 				
@@ -143,7 +147,7 @@
 				
 					</table>
 					<br />
-				</form>
+				
 			
 
 	</div>
