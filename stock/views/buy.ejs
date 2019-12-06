@@ -13,30 +13,34 @@
 
 	<script type="text/javascript">
     function GetSelected() {
-        //Reference the Table.
-        var grid = document.getElementById("table");
- 
-        //Reference the CheckBoxes in Table.
-        var checkBoxes = grid.getElementsByTagName("INPUT");
-		var stocks=[];
-		var company=[];
-		var prices=[];
-		var no_stocks=[];
-        //Loop through the CheckBoxes.
-        for (var i = 0; i < checkBoxes.length; i++) {
-            if (checkBoxes[i].checked) {
-                var row = checkBoxes[i].parentNode.parentNode;
-				stocks.push(row.cells[1].innerHTML);
-				company.push(row.cells[2].innerHTML);
-				prices.push(row.cells[3].innerHTML);
-				no_stocks.push(row.cells[4].innerHTML);
-            }
+		if ((date.day() == 0) || (date.day() == 6) || (date.hour() < 8) || (date.hour() > 16)) {
+			window.alert('Transactions cannot be made outside the business hours of 8am - 5pm CST');
+		} else {
+			//Reference the Table.
+			var grid = document.getElementById("table");
+	
+			//Reference the CheckBoxes in Table.
+			var checkBoxes = grid.getElementsByTagName("INPUT");
+			var stocks=[];
+			var company=[];
+			var prices=[];
+			var no_stocks=[];
+			//Loop through the CheckBoxes.
+			for (var i = 0; i < checkBoxes.length; i++) {
+				if (checkBoxes[i].checked) {
+					var row = checkBoxes[i].parentNode.parentNode;
+					stocks.push(row.cells[1].innerHTML);
+					company.push(row.cells[2].innerHTML);
+					prices.push(row.cells[3].innerHTML);
+					no_stocks.push(row.cells[4].innerHTML);
+				}
+			}
+			var message = {stocks:stocks,company:company,prices:prices,no_stocks:no_stocks};
+			var m=JSON.stringify(message);
+			console.log('in buy.ejs' + m);
+			document.getElementById('buy_button').href=`/buy_stocks:${m}`					 
+			window.alert('Buy request submitted');
 		}
-		var message = {stocks:stocks,company:company,prices:prices,no_stocks:no_stocks};
-		var m=JSON.stringify(message);
-		console.log('in buy.ejs' + m);
-		document.getElementById('buy_button').href=`/buy_stocks:${m}`					 
-		window.alert('Buy request submitted');
     }
 </script>
 
@@ -112,7 +116,7 @@
 						<a class="p-2 text-muted" href="/get_my_stocks">My Stocks</a>
 						<a class="p-2 text-muted" href="/search">Search Stocks</a>
 						<a class="p-2 text-muted" href="">Buy Stocks</a>
-						<a class="p-2 text-muted" href="">Sell Stocks</a>
+						<a class="p-2 text-muted" href="/sell">Sell Stocks</a>
 					</nav>
 				</div>
 				<br>

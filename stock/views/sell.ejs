@@ -68,31 +68,35 @@
     
     <script type="text/javascript">
         function GetSelected() {
-            //Reference the Table.
-            var grid = document.getElementById("table");
-     
-            //Reference the CheckBoxes in Table.
-            var checkBoxes = grid.getElementsByTagName("INPUT");
-            var stocks=[];
-            var prices=[];
-            var no_stocks=[];
-            var no_stocks_to_sell=[];
-            //Loop through the CheckBoxes.
-            for (var i = 0; i < checkBoxes.length; i++) {
-                if (checkBoxes[i].checked) {
-                    var row = checkBoxes[i].parentNode.parentNode;
-                    stocks.push(row.cells[1].innerHTML);
-                    prices.push(row.cells[3].innerHTML);
-                    no_stocks.push(row.cells[4].innerHTML);
-                    no_stocks_to_sell.push(row.cells[5].innerHTML);
-                    
-                }
-            }
-            var message = {stocks:stocks,prices:prices,no_stocks:no_stocks,no_stocks_to_sell:no_stocks_to_sell};
-            var m=JSON.stringify(message);
-            console.log('in sell.ejs' + m);
-            document.getElementById('sell_button').href=`/sell_stocks:${m}`					 
-            window.alert('Sell request submitted');
+			if ((date.day() == 0) || (date.day() == 6) || (date.hour() < 8) || (date.hour() > 16)) {
+				window.alert('Transactions cannot be made outside the business hours of 8am - 5pm CST');
+			} else {
+				//Reference the Table.
+				var grid = document.getElementById("table");
+		
+				//Reference the CheckBoxes in Table.
+				var checkBoxes = grid.getElementsByTagName("INPUT");
+				var stocks=[];
+				var prices=[];
+				var no_stocks=[];
+				var no_stocks_to_sell=[];
+				//Loop through the CheckBoxes.
+				for (var i = 0; i < checkBoxes.length; i++) {
+					if (checkBoxes[i].checked) {
+						var row = checkBoxes[i].parentNode.parentNode;
+						stocks.push(row.cells[1].innerHTML);
+						prices.push(row.cells[3].innerHTML);
+						no_stocks.push(row.cells[4].innerHTML);
+						no_stocks_to_sell.push(row.cells[5].innerHTML);
+						
+					}
+				}
+				var message = {stocks:stocks,prices:prices,no_stocks:no_stocks,no_stocks_to_sell:no_stocks_to_sell};
+				var m=JSON.stringify(message);
+				console.log('in sell.ejs' + m);
+				document.getElementById('sell_button').href=`/sell_stocks:${m}`					 
+				window.alert('Sell request submitted');
+			}
         }
     </script>
     
