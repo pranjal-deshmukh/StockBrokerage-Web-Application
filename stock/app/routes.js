@@ -395,14 +395,15 @@ module.exports = function (app, passport) {
 	app.get('/profile', isLoggedIn, function (req, res) {
 		return_data = {}
 		const id = req.user.idUser;
-		query1 = "select username, address, email, balance from users where `idUser`=" + id;
+		query1 = "select username, address, email, balance, security_ans from users where `idUser`=" + id;
 		query2 = "select account_no from bank where `userid`=" + id;
 		connection.query(query1, {}, function (err, results) {
 			profile = {
 				username: results[0].username,
 				address: results[0].address,
 				email: results[0].email,
-				balance: results[0].balance
+				balance: results[0].balance,
+				security_ans: results[0].security_ans
 			};
 			if (!profile.email) profile.email = '';
 			if (!profile.address) profile.address = '';
